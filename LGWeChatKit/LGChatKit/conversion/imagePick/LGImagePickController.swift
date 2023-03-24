@@ -29,9 +29,9 @@ class LGImagePickController: UITableViewController {
         tableView.tableFooterView = UIView(frame: CGRectZero)
         
         PHPhotoLibrary.requestAuthorization { (authorizationStatus) -> Void  in
-            if authorizationStatus == .Authorized {
+            if authorizationStatus == .authorized {
                 self.viewModel?.getCollectionList()
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                DispatchQueue.main.async(execute: { () -> Void in
                     self.tableView.reloadData()
                 })
             }
@@ -44,41 +44,41 @@ class LGImagePickController: UITableViewController {
     }
 
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let item = UIBarButtonItem(title: "取消", style: .Plain, target: self, action: "dismissView")
+        let item = UIBarButtonItem(title: "取消", style: .plain, target: self, action: "dismissView")
         self.navigationItem.rightBarButtonItem = item
         
         selectedInfo.removeAllObjects()
     }
     
     func dismissView() {
-        delegate?.imagePickerControllerCanceled(self)
-        self.dismissViewControllerAnimated(true, completion: nil)
+        delegate?.imagePickerControllerCanceled(picker: self)
+        self.dismiss(animated: true, completion: nil)
     }
     
-    override func dismissViewControllerAnimated(flag: Bool, completion: (() -> Void)?) {
-        super.dismissViewControllerAnimated(flag, completion: completion)
+    override func dismiss(animated flag: Bool, completion: (() -> Void)?) {
+        super.dismiss(animated: flag, completion: completion)
 
-        delegate?.imagePickerController(self, didFinishPickingImages: selectedInfo.copy() as! [UIImage])
+        delegate?.imagePickerController(picker: self, didFinishPickingImages: selectedInfo.copy() as! [UIImage])
     }
     
     // MARK: - Table view data source
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return (self.viewModel?.collections.value.count)!
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("ImagePickreuseIdentifier")
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell = tableView.dequeueReusableCell(withIdentifier: "ImagePickreuseIdentifier")
 
         if cell == nil {
-            cell = UITableViewCell(style: .Subtitle, reuseIdentifier: "ImagePickreuseIdentifier")
-            cell?.imageView?.contentMode = .ScaleToFill
-            cell?.accessoryType = .DisclosureIndicator
+            cell = UITableViewCell(style: .subtitle, reuseIdentifier: "ImagePickreuseIdentifier")
+            cell?.imageView?.contentMode = .scaleToFill
+            cell?.accessoryType = .disclosureIndicator
         }
         let collection = viewModel?.collections.value[indexPath.row]
-        PHImageManager.defaultManager().requestImageForAsset(collection?.fetchResult.lastObject as! PHAsset, targetSize: CGSizeMake(50, 60), contentMode: .AspectFit, options: nil) { (image, _: [NSObject : AnyObject]?) -> Void in
+        PHImageManager.default().requestImage(for: collection?.fetchResult.lastObject as! PHAsset, targetSize: CGSizeMake(50, 60), contentMode: .aspectFit, options: nil) { (image, _: [AnyHashable : Any]?) -> Void in
             if image == nil {
                 return
             }
@@ -92,7 +92,7 @@ class LGImagePickController: UITableViewController {
         return cell!
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let fetchReslut = viewModel?.collections.value[indexPath.row]
         
         let gridCtrl = LGAssetGridViewController()
@@ -103,8 +103,8 @@ class LGImagePickController: UITableViewController {
     }
     
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        if indexPath.row >= viewModel?.collections.value.count {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.row >= viewModel?.collections.value.count ?? 0 {
             return 100
         } else {
             return CGFloat(75)

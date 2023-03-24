@@ -15,6 +15,7 @@ import UIKit
 private let needSaveToPHlibrary = false
 
 class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
+    
     var captureSession: AVCaptureSession!
     var captureDeviceInput: AVCaptureDeviceInput!
     var captureMovieFileOutput: AVCaptureMovieFileOutput!
@@ -24,16 +25,16 @@ class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
     var fileName: String!
     
     var complectionClosure: ((NSURL) -> Void)?
-    var cancelClosure: (Void -> Void)?
+    var cancelClosure: (() -> Void)?
     
     override init() {
         super.init()
         captureSession = AVCaptureSession()
-        let captureDevice = getCameraDevice(.Back)
+        let captureDevice = getCameraDevice(position: .back)
         if captureDevice == nil {
             return
         }
-        let audioCaptureDevice = AVCaptureDevice.devicesWithMediaType(AVMediaTypeAudio).first as! AVCaptureDevice
+        let audioCaptureDevice = AVCaptureDevice.devices(for: AVMediaType.audio).first as! AVCaptureDevice
         
         var audioCaptureDeviceInput: AVCaptureDeviceInput?
         do {
@@ -44,7 +45,7 @@ class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
         }
         
         do {
-            try captureDeviceInput = AVCaptureDeviceInput(device: captureDevice)
+            try captureDeviceInput = AVCaptureDeviceInput(device: captureDevice!)
         } catch let error as NSError {
             NSLog("%@", error)
             return
@@ -60,14 +61,14 @@ class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
         
         if captureSession.canAddOutput(captureMovieFileOutput) {
             captureSession.addOutput(captureMovieFileOutput)
-            let connection = captureMovieFileOutput.connectionWithMediaType(AVMediaTypeVideo)
-            if connection.supportsVideoStabilization {
-                connection.preferredVideoStabilizationMode = .Auto
+            let connection = captureMovieFileOutput.connection(with: AVMediaType.video)
+            if (connection?.isVideoStabilizationSupported ?? false) {
+                connection!.preferredVideoStabilizationMode = .auto
             }
         }
         captureSession.commitConfiguration()
         
-        addNotificationToDevice(captureDevice!)
+        addNotificationToDevice(newCaptureDevice: captureDevice!)
     }
  
     deinit {
@@ -77,8 +78,8 @@ class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
         removeNotification()
     }
     
-    func getCameraDevice(position: AVCaptureDevicePosition) -> (AVCaptureDevice?) {
-        let devices = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo)
+    func getCameraDevice(position: AVCaptureDevice.Position) -> (AVCaptureDevice?) {
+        let devices = AVCaptureDevice.devices(for: AVMediaType.video)
         for device in devices {
             let device = device as! AVCaptureDevice
             if device.position == position {
@@ -104,22 +105,22 @@ class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
             NSLog("%@", error)
             return
         }
-        captureDevice.subjectAreaChangeMonitoringEnabled = true
+        captureDevice.isSubjectAreaChangeMonitoringEnabled = true
         captureDevice.unlockForConfiguration()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "notificateAreChanged:", name: AVCaptureDeviceSubjectAreaDidChangeNotification, object: newCaptureDevice)
+        NotificationCenter.default.addObserver(self, selector: Selector("notificateAreChanged:"), name: NSNotification.Name.AVCaptureDeviceSubjectAreaDidChange, object: newCaptureDevice)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "notificateSessionError:", name: AVCaptureSessionRuntimeErrorNotification, object: captureSession)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "sessionWasInterrupted:", name: AVCaptureSessionWasInterruptedNotification, object: captureSession)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "sessionInterruptEnd:", name: AVCaptureSessionInterruptionEndedNotification, object: captureSession)
+        NotificationCenter.default.addObserver(self, selector: "notificateSessionError:", name: NSNotification.Name.AVCaptureSessionRuntimeError, object: captureSession)
+        NotificationCenter.default.addObserver(self, selector: "sessionWasInterrupted:", name: NSNotification.Name.AVCaptureSessionWasInterrupted, object: captureSession)
+        NotificationCenter.default.addObserver(self, selector: "sessionInterruptEnd:", name: NSNotification.Name.AVCaptureSessionInterruptionEnded, object: captureSession)
     }
     
     func removeNotificationFromDevice(oldCaptureDevice: AVCaptureDevice) {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: AVCaptureDeviceSubjectAreaDidChangeNotification, object: oldCaptureDevice)
+        NotificationCenter.default.removeObserver(oldCaptureDevice)
     }
     
     func removeNotification() {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     func notificateAreChanged(notification: NSNotification) {
@@ -139,38 +140,38 @@ class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
     }
     
     func beginRecord() {
-        if !captureMovieFileOutput.recording {
-            if UIDevice.currentDevice().multitaskingSupported {
-                backgroundTaskIdentifier = UIApplication.sharedApplication().beginBackgroundTaskWithExpirationHandler(nil)
+        if !captureMovieFileOutput.isRecording {
+            if UIDevice.current.isMultitaskingSupported {
+                backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
             }
             
-            var fileName = String(stringInterpolationSegment: arc4random_uniform(1000))
+            var fileName = String(arc4random_uniform(1000))
             fileName = fileName + ".m4v"
-            let filePath = NSString(string: NSTemporaryDirectory()).stringByAppendingPathComponent(fileName)
+            let filePath = NSString(string: NSTemporaryDirectory()).appendingPathComponent(fileName)
             let fileUrl = NSURL(fileURLWithPath: filePath)
             
             self.fileName = fileName
             self.filePath = fileUrl
             
-            captureMovieFileOutput.startRecordingToOutputFileURL(fileUrl, recordingDelegate: self)
+            captureMovieFileOutput.startRecording(to: fileUrl as URL, recordingDelegate: self)
         } else {
             captureMovieFileOutput.stopRecording()
         }
     }
     
     func complectionRecord() {
-        if captureMovieFileOutput.recording {
+        if captureMovieFileOutput.isRecording {
             captureMovieFileOutput.stopRecording()
         }
     }
     
     func cancelRecord() {
-        if captureMovieFileOutput.recording {
+        if captureMovieFileOutput.isRecording {
             captureMovieFileOutput.stopRecording()
         }
         if filePath != nil {
             do {
-                try NSFileManager.defaultManager().removeItemAtURL(filePath!)
+                try FileManager.default.removeItem(at: filePath! as URL)
             } catch let error as NSError {
                 NSLog("remove file error: %@", error)
             }
@@ -184,15 +185,15 @@ class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
     func changeCameraPosition() {
         let currentDevice = captureDeviceInput.device
         let currentPosition = currentDevice.position
-        removeNotificationFromDevice(currentDevice)
+        removeNotificationFromDevice(oldCaptureDevice: currentDevice)
         
-        var changePosition: AVCaptureDevicePosition = .Front
-        if currentPosition == .Unspecified || currentPosition == .Front {
-            changePosition = .Back
+        var changePosition: AVCaptureDevice.Position = .front
+        if currentPosition == .unspecified || currentPosition == .front {
+            changePosition = .back
         }
         
-        if let changeDevice = getCameraDevice(changePosition) {
-            addNotificationToDevice(changeDevice)
+        if let changeDevice = getCameraDevice(position: changePosition) {
+            addNotificationToDevice(newCaptureDevice: changeDevice)
             var changeDeviceInput: AVCaptureDeviceInput!
             do {
                 changeDeviceInput = try AVCaptureDeviceInput(device: changeDevice)
@@ -211,7 +212,7 @@ class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
         }
     }
     
-    func setFlashMode(flashMode: AVCaptureFlashMode) {
+    func setFlashMode(flashMode: AVCaptureDevice.FlashMode) {
         let captureDevice = captureDeviceInput.device
         do {
             try captureDevice.lockForConfiguration()
@@ -226,7 +227,7 @@ class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
     }
     
     
-    func setFocusMode(focusMode: AVCaptureFocusMode) {
+    func setFocusMode(focusMode: AVCaptureDevice.FocusMode) {
         let captureDevice = captureDeviceInput.device
         do {
             try captureDevice.lockForConfiguration()
@@ -240,7 +241,7 @@ class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
         captureDevice.unlockForConfiguration()
     }
     
-    func setFocusExposureMode(focusMode: AVCaptureFocusMode, exposureMode: AVCaptureExposureMode, point: CGPoint) {
+    func setFocusExposureMode(focusMode: AVCaptureDevice.FocusMode, exposureMode: AVCaptureDevice.ExposureMode, point: CGPoint) {
         let captureDevice = captureDeviceInput.device
         do {
             try captureDevice.lockForConfiguration()
@@ -252,14 +253,14 @@ class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
         if captureDevice.isFocusModeSupported(focusMode) {
             captureDevice.focusMode = focusMode
         }
-        if captureDevice.focusPointOfInterestSupported {
+        if captureDevice.isFocusPointOfInterestSupported {
             captureDevice.focusPointOfInterest = point
         }
         
         if captureDevice.isExposureModeSupported(exposureMode) {
             captureDevice.exposureMode = exposureMode
         }
-        if captureDevice.exposurePointOfInterestSupported {
+        if captureDevice.isExposurePointOfInterestSupported {
             captureDevice.exposurePointOfInterest = point
         }
         
@@ -272,32 +273,33 @@ class LGRecordVideoModel: NSObject, AVCaptureFileOutputRecordingDelegate {
         NSLog("begin record")
     }
     
-    func captureOutput(captureOutput: AVCaptureFileOutput!, didFinishRecordingToOutputFileAtURL outputFileURL: NSURL!, fromConnections connections: [AnyObject]!, error: NSError!) {
+    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+        
         NSLog("record finish")
         if error == nil {
             
             let lastBackgroundTaskIdentifier = backgroundTaskIdentifier
-            self.backgroundTaskIdentifier = UIBackgroundTaskInvalid
+            self.backgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
             if let complection = complectionClosure {
                 complection(filePath!)
             }
             
             if needSaveToPHlibrary {
-                PHPhotoLibrary.sharedPhotoLibrary().performChanges({ () -> Void in
-                    PHAssetCreationRequest.creationRequestForAsset().addResourceWithType(.Video, fileURL: outputFileURL, options: nil)
+                PHPhotoLibrary.shared().performChanges({ () -> Void in
+                    PHAssetCreationRequest.forAsset().addResource(with: .video, fileURL: outputFileURL as URL, options: nil)
                     }) { (finish, errors) -> Void in
                         if errors == nil {
                             NSLog("保存成功")
                         } else {
-                            NSLog("保存失败：%@", errors!)
+                            print("保存失败：%@", errors!)
                         }
-                        if lastBackgroundTaskIdentifier != UIBackgroundTaskInvalid {
-                            UIApplication.sharedApplication().endBackgroundTask(lastBackgroundTaskIdentifier)
+                        if lastBackgroundTaskIdentifier != UIBackgroundTaskIdentifier.invalid {
+                            UIApplication.shared.endBackgroundTask(lastBackgroundTaskIdentifier!)
                         }
                 }
             }
         } else {
-            NSLog("record error:%@", error)
+            print("record error:%@", error)
         }
     }
     

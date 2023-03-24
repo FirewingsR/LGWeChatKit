@@ -19,7 +19,7 @@ class LGAssetGridViewController: UICollectionViewController, UIViewControllerTra
     let presentController = LGPresentAnimationController()
     let dismissController = LGDismissAnimationController()
     
-    var assetsFetchResults: PHFetchResult! {
+    var assetsFetchResults: PHFetchResult<AnyObject>! {
         willSet {
             for i in 0...newValue.count - 1 {
                 let asset = newValue[i] as! PHAsset
@@ -45,10 +45,10 @@ class LGAssetGridViewController: UICollectionViewController, UIViewControllerTra
         layout.itemSize = CGSizeMake(itemSize, itemSize)
         layout.minimumInteritemSpacing = itemMargin
         layout.minimumLineSpacing = itemMargin
-        layout.sectionInset = UIEdgeInsetsMake(itemMargin, itemMargin, itemMargin, itemMargin)
+        layout.sectionInset = UIEdgeInsets(top: itemMargin, left: itemMargin, bottom: itemMargin, right: itemMargin)
         super.init(collectionViewLayout: layout)
         self.collectionView?.collectionViewLayout = layout
-        collectionView?.contentInset = UIEdgeInsetsMake(0, 0, 50, 0)
+        collectionView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 50, right: 0)
     }
     
     override init(collectionViewLayout layout: UICollectionViewLayout) {
@@ -61,9 +61,9 @@ class LGAssetGridViewController: UICollectionViewController, UIViewControllerTra
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView!.backgroundColor = UIColor.whiteColor()
+        collectionView!.backgroundColor = UIColor.white
         // Register cell classes
-        self.collectionView!.registerClass(LGAssertGridViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        self.collectionView!.register(LGAssertGridViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
 
         previousPreRect = CGRectZero
         toolBar = LGAssetToolView(leftTitle: "预览", leftSelector: "preView", rightSelector: "send", parent: self)
@@ -77,7 +77,7 @@ class LGAssetGridViewController: UICollectionViewController, UIViewControllerTra
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         toolBar.selectCount = 0
  
@@ -96,7 +96,7 @@ class LGAssetGridViewController: UICollectionViewController, UIViewControllerTra
     }
     
     func send() {
-        navigationController?.viewControllers[0].dismissViewControllerAnimated(true, completion: nil)
+        navigationController?.viewControllers[0].dismiss(animated: true, completion: nil)
     }
     
     // MARK: - UIViewControllerTransitioningDelegate
@@ -113,13 +113,13 @@ class LGAssetGridViewController: UICollectionViewController, UIViewControllerTra
 extension LGAssetGridViewController {
     // MARK: UICollectionViewDataSource
     
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
         return assetModels.count
     }
     
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! LGAssertGridViewCell
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! LGAssertGridViewCell
         
         let asset = assetModels[indexPath.row].asset
         cell.assetModel = assetModels[indexPath.row]
@@ -131,10 +131,10 @@ extension LGAssetGridViewController {
         } else {
             cell.buttonSelect = false
         }
-        cell.selectIndicator.addTarget(self, action: "selectButton:", forControlEvents: .TouchUpInside)
+        cell.selectIndicator.addTarget(self, action: "selectButton:", for: .touchUpInside)
         
-        let scale = UIScreen.mainScreen().scale
-        imageManager.requestImageForAsset(asset, targetSize: CGSizeMake(itemSize * scale, itemSize * scale), contentMode: .AspectFill, options: nil) { (image, _:[NSObject : AnyObject]?) -> Void in
+        let scale = UIScreen.main.scale
+        imageManager.requestImage(for: asset, targetSize: CGSizeMake(itemSize * scale, itemSize * scale), contentMode: .aspectFill, options: nil) { (image, _:[AnyHashable : Any]?) -> Void in
             if cell.assetIdentifier == asset.localIdentifier {
                 cell.imageView.image = image
             }
@@ -143,7 +143,7 @@ extension LGAssetGridViewController {
         return cell
     }
     
-    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let assetCtrl = LGAssetViewController()
         self.selectedIndexPath = indexPath
         assetCtrl.assetModels = assetModels
@@ -152,38 +152,38 @@ extension LGAssetGridViewController {
         self.assetViewCtrl = assetCtrl
         let nav = UINavigationController(rootViewController: assetCtrl)
         nav.transitioningDelegate = self
-        self.presentViewController(nav, animated: true, completion: nil)
+        self.present(nav, animated: true, completion: nil)
     }
     
     // MARK: cell button selector
     
     func selectButton(button: UIButton) {
         let assetModel = assetModels[button.tag]
-        let cell = collectionView?.cellForItemAtIndexPath(NSIndexPath(forRow: button.tag, inSection: 0)) as! LGAssertGridViewCell
-        if button.selected == false {
-            assetModel.setSelect(true)
+        let cell: LGAssertGridViewCell = collectionView?.cellForItem(at: IndexPath(item: button.tag, section: 0)) as! LGAssertGridViewCell
+        if button.isSelected == false {
+            assetModel.setSelect(isSelect: true)
             toolBar.addSelectCount = 1
-            button.selected = true
-            button.addAnimation(durationTime)
-            selectedInfo?.addObject(cell.imageView.image!)
-            button.setImage(UIImage(named: "CellBlueSelected"), forState: .Normal)
+            button.isSelected = true
+            button.addAnimation(durationTime: durationTime)
+            selectedInfo?.add(cell.imageView.image!)
+            button.setImage(UIImage(named: "CellBlueSelected"), for: .normal)
         } else {
-            button.selected = false
-            assetModel.setSelect(false)
+            button.isSelected = false
+            assetModel.setSelect(isSelect: false)
             toolBar.addSelectCount = -1
-            selectedInfo?.removeObject(cell.imageView.image!)
-            button.setImage(UIImage(named: "CellGreySelected"), forState: .Normal)
+            selectedInfo?.remove(cell.imageView.image!)
+            button.setImage(UIImage(named: "CellGreySelected"), for: .normal)
         }
     }
     
     
     // MARK: update chache asset
-    override func scrollViewDidScroll(scrollView: UIScrollView) {
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         updateAssetChache()
     }
     
     func updateAssetChache() {
-        let isViewVisible = self.isViewLoaded() && self.view.window != nil
+        let isViewVisible = self.isViewLoaded && self.view.window != nil
         if !isViewVisible {
             return
         }
@@ -193,21 +193,21 @@ extension LGAssetGridViewController {
         
         let delta = abs(preRect.midY - previousPreRect.midY)
         if delta > (collectionView?.bounds.height)! / 3 {
-            var addIndexPaths = [NSIndexPath]()
-            var remoeIndexPaths = [NSIndexPath]()
+            var addIndexPaths = [IndexPath]()
+            var remoeIndexPaths = [IndexPath]()
             
-            differentBetweenRect(previousPreRect, newRect: preRect, removeHandler: { (removeRect) -> Void in
-                    remoeIndexPaths.appendContentsOf(self.indexPathInRect(removeRect))
+            differentBetweenRect(oldRect: previousPreRect, newRect: preRect, removeHandler: { (removeRect) -> Void in
+                remoeIndexPaths.append(contentsOf: self.indexPathInRect(rect: removeRect))
                 }, addHandler: { (addRect) -> Void in
-                    addIndexPaths.appendContentsOf(self.indexPathInRect(addRect))
+                    addIndexPaths.append(contentsOf: self.indexPathInRect(rect: addRect))
             })
             
-            imageManager.startCachingImagesForAssets(assetAtIndexPath(addIndexPaths), targetSize: CGSizeMake(itemSize, itemSize), contentMode: .AspectFill, options: nil)
-            imageManager.stopCachingImagesForAssets(assetAtIndexPath(remoeIndexPaths), targetSize: CGSizeMake(itemSize, itemSize), contentMode: .AspectFill, options: nil)
+            imageManager.startCachingImages(for: assetAtIndexPath(indexPaths: addIndexPaths), targetSize: CGSizeMake(itemSize, itemSize), contentMode: .aspectFill, options: nil)
+            imageManager.stopCachingImages(for: assetAtIndexPath(indexPaths: remoeIndexPaths), targetSize: CGSizeMake(itemSize, itemSize), contentMode: .aspectFill, options: nil)
         }
     }
     
-    func assetAtIndexPath(indexPaths: [NSIndexPath]) -> [PHAsset] {
+    func assetAtIndexPath(indexPaths: [IndexPath]) -> [PHAsset] {
         if indexPaths.count == 0 {
             return []
         }
@@ -220,12 +220,12 @@ extension LGAssetGridViewController {
     }
     
     
-    func indexPathInRect(rect: CGRect) -> [NSIndexPath]{
-       let allAttributes = collectionView?.collectionViewLayout.layoutAttributesForElementsInRect(rect)
+    func indexPathInRect(rect: CGRect) -> [IndexPath] {
+        let allAttributes = collectionView?.collectionViewLayout.layoutAttributesForElements(in: rect)
         if allAttributes?.count == 0 {
             return []
         }
-        var indexPaths = [NSIndexPath]()
+        var indexPaths = [IndexPath]()
         for layoutAttribute in allAttributes! {
             indexPaths.append(layoutAttribute.indexPath)
         }

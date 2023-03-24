@@ -16,10 +16,10 @@ class LGRecordIndicatorView: UIView {
     
     override init(frame: CGRect) {
         textLabel = UILabel()
-        textLabel.textAlignment = .Center
-        textLabel.font = UIFont.systemFontOfSize(13.0)
+        textLabel.textAlignment = .center
+        textLabel.font = UIFont.systemFont(ofSize: 13.0)
         textLabel.text = "手指上滑,取消发送"
-        textLabel.textColor = UIColor.blackColor()
+        textLabel.textColor = UIColor.black
         
         images = [UIImage(named: "record_animate_01")!,
             UIImage(named: "record_animate_02")!,
@@ -37,7 +37,7 @@ class LGRecordIndicatorView: UIView {
         super.init(frame: frame)
         backgroundColor = UIColor(hexString: "365560", alpha: 0.6)
         // 增加毛玻璃效果
-        let visualView = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
+        let visualView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
         visualView.frame = self.bounds
         visualView.layer.cornerRadius = 10.0
         self.layer.cornerRadius = 10.0
@@ -50,12 +50,12 @@ class LGRecordIndicatorView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        self.addConstraint(NSLayoutConstraint(item: imageView, attribute: .CenterX, relatedBy: .Equal, toItem: self, attribute: .CenterX, multiplier: 1, constant: 0))
-        self.addConstraint(NSLayoutConstraint(item: imageView, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: -15))
+        self.addConstraint(NSLayoutConstraint(item: imageView, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
+        self.addConstraint(NSLayoutConstraint(item: imageView, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: -15))
         
-        self.addConstraint(NSLayoutConstraint(item: textLabel, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 1, constant: 0))
-        self.addConstraint(NSLayoutConstraint(item: textLabel, attribute: .Top, relatedBy: .Equal, toItem: imageView, attribute: .Bottom, multiplier: 1, constant: 10))
-        self.addConstraint(NSLayoutConstraint(item: textLabel, attribute: .Width, relatedBy: .Equal, toItem: self, attribute: .Width, multiplier: 1, constant: 0))
+        self.addConstraint(NSLayoutConstraint(item: textLabel, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1, constant: 0))
+        self.addConstraint(NSLayoutConstraint(item: textLabel, attribute: .top, relatedBy: .equal, toItem: imageView, attribute: .bottom, multiplier: 1, constant: 10))
+        self.addConstraint(NSLayoutConstraint(item: textLabel, attribute: .width, relatedBy: .equal, toItem: self, attribute: .width, multiplier: 1, constant: 0))
         
         translatesAutoresizingMaskIntoConstraints = true
     }
@@ -64,30 +64,30 @@ class LGRecordIndicatorView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func showText(text: String, textColor: UIColor = UIColor.blackColor()) {
+    func showText(text: String, textColor: UIColor = UIColor.black) {
         textLabel.textColor = textColor
         textLabel.text = text
     }
     
     func updateLevelMetra(levelMetra: Float) {
         if levelMetra > -20 {
-            showMetraLevel(8)
+            showMetraLevel(level: 8)
         } else if levelMetra > -25 {
-            showMetraLevel(7)
+            showMetraLevel(level: 7)
         }else if levelMetra > -30 {
-            showMetraLevel(6)
+            showMetraLevel(level: 6)
         } else if levelMetra > -35 {
-            showMetraLevel(5)
+            showMetraLevel(level: 5)
         } else if levelMetra > -40 {
-            showMetraLevel(4)
+            showMetraLevel(level: 4)
         } else if levelMetra > -45 {
-            showMetraLevel(3)
+            showMetraLevel(level: 3)
         } else if levelMetra > -50 {
-            showMetraLevel(2)
+            showMetraLevel(level: 2)
         } else if levelMetra > -55 {
-            showMetraLevel(1)
+            showMetraLevel(level: 1)
         } else if levelMetra > -60 {
-            showMetraLevel(0)
+            showMetraLevel(level: 0)
         }
     }
     
@@ -96,11 +96,11 @@ class LGRecordIndicatorView: UIView {
         if level > images.count {
             return
         }
-        performSelectorOnMainThread("showIndicatorImage:", withObject: NSNumber(integer: level), waitUntilDone: false)
+        performSelector(onMainThread: "showIndicatorImage:", with: NSNumber(value: level), waitUntilDone: false)
     }
     
     func showIndicatorImage(level: NSNumber) {
-        imageView.image = images[level.integerValue]
+        imageView.image = images[level.intValue]
     }
     
 }

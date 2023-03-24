@@ -21,7 +21,7 @@ class LGRecordVideoView: UIView {
     var recordVideoModel: LGRecordVideoModel!
     var preViewLayer: AVCaptureVideoPreviewLayer!
     
-    var recordTimer: NSTimer!
+    var recordTimer: Timer!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,7 +34,7 @@ class LGRecordVideoView: UIView {
     }
     
     func customInit() {
-        backgroundColor = UIColor.blackColor()
+        backgroundColor = UIColor.black
         
         if TARGET_IPHONE_SIMULATOR == 1 {
             NSLog("simulator can't do this!!!")
@@ -42,44 +42,44 @@ class LGRecordVideoView: UIView {
             recordVideoModel = LGRecordVideoModel()
             
             videoView = UIView(frame: CGRectMake(0, 0, bounds.width, bounds.height * 0.7))
-            videoView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+            videoView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             addSubview(videoView)
             
             preViewLayer = AVCaptureVideoPreviewLayer(session: recordVideoModel.captureSession)
-            preViewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+            preViewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
             preViewLayer.frame = videoView.bounds
-            videoView.layer.insertSublayer(preViewLayer, atIndex: 0)
+            videoView.layer.insertSublayer(preViewLayer, at: 0)
             
-            recordButton = UIButton(type: .Custom)
-            recordButton.setTitleColor(UIColor.orangeColor(), forState: .Normal)
+            recordButton = UIButton(type: .custom)
+            recordButton.setTitleColor(UIColor.orange, for: .normal)
             recordButton.layer.cornerRadius = buttonW / 2
             recordButton.layer.borderWidth = 1.5
-            recordButton.layer.borderColor = UIColor.orangeColor().CGColor
-            recordButton.setTitle("按住拍", forState: .Normal)
-            recordButton.addTarget(self, action: "buttonTouchDown", forControlEvents: .TouchDown)
-            recordButton.addTarget(self, action: "buttonDragOutside", forControlEvents: .TouchDragOutside)
-            recordButton.addTarget(self, action: "buttonCancel", forControlEvents: .TouchUpOutside)
-            recordButton.addTarget(self, action: "buttonTouchUp", forControlEvents: .TouchUpInside)
+            recordButton.layer.borderColor = UIColor.orange.cgColor
+            recordButton.setTitle("按住拍", for: .normal)
+            recordButton.addTarget(self, action: "buttonTouchDown", for: .touchDown)
+            recordButton.addTarget(self, action: "buttonDragOutside", for: .touchDragOutside)
+            recordButton.addTarget(self, action: "buttonCancel", for: .touchUpOutside)
+            recordButton.addTarget(self, action: "buttonTouchUp", for: .touchUpInside)
             addSubview(recordButton)
             
             progressView = UIProgressView(frame: CGRectZero)
-            progressView.progressTintColor = UIColor.blackColor()
-            progressView.trackTintColor = UIColor.orangeColor()
-            progressView.hidden = true
+            progressView.progressTintColor = UIColor.black
+            progressView.trackTintColor = UIColor.orange
+            progressView.isHidden = true
             addSubview(progressView)
             
             progressView2 = UIProgressView(frame: CGRectZero)
-            progressView2.progressTintColor = UIColor.blackColor()
-            progressView2.trackTintColor = UIColor.orangeColor()
-            progressView2.hidden = true
+            progressView2.progressTintColor = UIColor.black
+            progressView2.trackTintColor = UIColor.orange
+            progressView2.isHidden = true
             addSubview(progressView2)
-            progressView2.transform = CGAffineTransformMakeRotation(CGFloat(M_PI))
+            progressView2.transform = CGAffineTransformMakeRotation(CGFloat(Double.pi))
             
             indicatorView = UILabel()
-            indicatorView.textColor = UIColor.whiteColor()
-            indicatorView.font = UIFont.systemFontOfSize(12.0)
-            indicatorView.backgroundColor = UIColor.redColor()
-            indicatorView.hidden = true
+            indicatorView.textColor = UIColor.white
+            indicatorView.font = UIFont.systemFont(ofSize: 12.0)
+            indicatorView.backgroundColor = UIColor.red
+            indicatorView.isHidden = true
             addSubview(indicatorView)
             
             recordButton.bounds = CGRectMake(0, 0, buttonW, buttonW)
@@ -93,44 +93,44 @@ class LGRecordVideoView: UIView {
         }
     }
     
-    override func willMoveToSuperview(newSuperview: UIView?) {
-        super.willMoveToSuperview(newSuperview)
+    override func willMove(toSuperview newSuperview: UIView?) {
+        super.willMove(toSuperview: newSuperview)
         if TARGET_IPHONE_SIMULATOR == 0 {
             recordVideoModel.start()
         }
     }
     
     func buttonTouchDown() {
-        UIView.animateWithDuration(0.2, animations: { () -> Void in
+        UIView.animate(withDuration: 0.2, animations: { () -> Void in
             self.recordButton.transform = CGAffineTransformMakeScale(1.5, 1.5)
             }) { (finish) -> Void in
-                self.recordButton.hidden = true
+                self.recordButton.isHidden = true
         }
         
         recordVideoModel.beginRecord()
         stopTimer()
-        self.progressView.hidden = false
-        self.progressView2.hidden = false
-        indicatorView.hidden = false
+        self.progressView.isHidden = false
+        self.progressView2.isHidden = false
+        indicatorView.isHidden = false
         indicatorView.text = "上移取消"
-        recordTimer = NSTimer(timeInterval: 1.0, target: self, selector: "recordTimerUpdate", userInfo: nil, repeats: true)
-        NSRunLoop.mainRunLoop().addTimer(recordTimer, forMode: NSRunLoopCommonModes)
+        recordTimer = Timer(timeInterval: 1.0, target: self, selector: "recordTimerUpdate", userInfo: nil, repeats: true)
+        RunLoop.main.add(recordTimer, forMode: RunLoop.Mode.common)
     }
     
     func buttonDragOutside() {
-        indicatorView.hidden = false
+        indicatorView.isHidden = false
         indicatorView.text = "松手取消"
     }
     
     func buttonCancel() {
-        UIView.animateWithDuration(0.2, animations: { () -> Void in
-            self.recordButton.hidden = false
+        UIView.animate(withDuration: 0.2, animations: { () -> Void in
+            self.recordButton.isHidden = false
             self.recordButton.transform = CGAffineTransformIdentity
             }) { (finish) -> Void in
-                self.indicatorView.hidden = true
-                self.progressView.hidden = true
+                self.indicatorView.isHidden = true
+                self.progressView.isHidden = true
                 self.progressView.progress = 0
-                self.progressView2.hidden = true
+                self.progressView2.isHidden = true
                 self.progressView2.progress = 0
                 self.stopTimer()
         }
@@ -138,14 +138,14 @@ class LGRecordVideoView: UIView {
     }
     
     func buttonTouchUp() {
-        UIView.animateWithDuration(0.2, animations: { () -> Void in
-            self.recordButton.hidden = false
+        UIView.animate(withDuration: 0.2, animations: { () -> Void in
+            self.recordButton.isHidden = false
             self.recordButton.transform = CGAffineTransformIdentity
             }) { (finish) -> Void in
-                self.indicatorView.hidden = true
-                self.progressView.hidden = true
+                self.indicatorView.isHidden = true
+                self.progressView.isHidden = true
                 self.progressView.progress = 0
-                self.progressView2.hidden = true
+                self.progressView2.isHidden = true
                 self.progressView2.progress = 0
                 self.stopTimer()
         }

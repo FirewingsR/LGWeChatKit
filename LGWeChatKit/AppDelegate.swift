@@ -16,13 +16,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        window = UIWindow(frame: UIScreen.main.bounds)
         
         UINavigationBar.appearance().barTintColor = UIColor(hexString: "39383d")
-        UINavigationBar.appearance().tintColor = UIColor.whiteColor()
-        UINavigationBar.appearance().titleTextAttributes = [NSFontAttributeName: UIFont.systemFontOfSize(17.0), NSForegroundColorAttributeName: UIColor.whiteColor()]
+        UINavigationBar.appearance().tintColor = UIColor.white
+        UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 17.0), NSAttributedString.Key.foregroundColor: UIColor.white]
         
-        UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName : UIColor(hexString: "68BB1E")!], forState: .Selected)
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor : UIColor(hexString: "68BB1E")!], for: .selected)
         
         self.window?.rootViewController = configurationRootViewController()
         
@@ -35,29 +35,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func configurationRootViewController() -> UITabBarController {
         let messageListCtrl = LGConversationListController()
         messageListCtrl.tabBarItem.title = "消息"
-        messageListCtrl.tabBarItem.image = UIImage(named: "tabbar_mainframe")?.imageWithRenderingMode(.AlwaysOriginal)
-        messageListCtrl.tabBarItem.selectedImage = UIImage(named: "tabbar_mainframeHL")?.imageWithRenderingMode(.AlwaysOriginal)
+        messageListCtrl.tabBarItem.image = UIImage(named: "tabbar_mainframe")?.withRenderingMode(.alwaysOriginal)
+        messageListCtrl.tabBarItem.selectedImage = UIImage(named: "tabbar_mainframeHL")?.withRenderingMode(.alwaysOriginal)
         let messageNavigationController = UINavigationController(rootViewController: messageListCtrl)
         
         // Create `chatsTableViewController`
         let friendCtrl = LGFriendViewController()
         friendCtrl.tabBarItem.title = "通讯录"
-        friendCtrl.tabBarItem.image = UIImage(named: "tabbar_contacts")?.imageWithRenderingMode(.AlwaysOriginal)
-        friendCtrl.tabBarItem.selectedImage = UIImage(named: "tabbar_contactsHL")?.imageWithRenderingMode(.AlwaysOriginal)
+        friendCtrl.tabBarItem.image = UIImage(named: "tabbar_contacts")?.withRenderingMode(.alwaysOriginal)
+        friendCtrl.tabBarItem.selectedImage = UIImage(named: "tabbar_contactsHL")?.withRenderingMode(.alwaysOriginal)
         let friendNavigationController = UINavigationController(rootViewController: friendCtrl)
         
         // Create `profileTableViewController`
         let finderCtrl = UIStoryboard(name: "findSB", bundle: nil).instantiateInitialViewController() as! LGFindViewController
         finderCtrl.tabBarItem.title = "发现"
-        finderCtrl.tabBarItem.image = UIImage(named: "tabbar_discover")?.imageWithRenderingMode(.AlwaysOriginal)
-        finderCtrl.tabBarItem.selectedImage = UIImage(named: "tabbar_discoverHL")?.imageWithRenderingMode(.AlwaysOriginal)
+        finderCtrl.tabBarItem.image = UIImage(named: "tabbar_discover")?.withRenderingMode(.alwaysOriginal)
+        finderCtrl.tabBarItem.selectedImage = UIImage(named: "tabbar_discoverHL")?.withRenderingMode(.alwaysOriginal)
         let findNavigationController = UINavigationController(rootViewController: finderCtrl)
         
         // Create `settingsTableViewController`
         let setCtrl = UIStoryboard(name: "setSB", bundle: nil).instantiateInitialViewController() as! LGMeViewController
         setCtrl.tabBarItem.title = "我"
-        setCtrl.tabBarItem.image = UIImage(named: "tabbar_me")?.imageWithRenderingMode(.AlwaysOriginal)
-        setCtrl.tabBarItem.selectedImage = UIImage(named: "tabbar_meHL")?.imageWithRenderingMode(.AlwaysOriginal)
+        setCtrl.tabBarItem.image = UIImage(named: "tabbar_me")?.withRenderingMode(.alwaysOriginal)
+        setCtrl.tabBarItem.selectedImage = UIImage(named: "tabbar_meHL")?.withRenderingMode(.alwaysOriginal)
         let settingsNavigationController = UINavigationController(rootViewController: setCtrl)
         
         let tabBarController = UITabBarController(nibName: nil, bundle: nil)

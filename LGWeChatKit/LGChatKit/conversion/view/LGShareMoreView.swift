@@ -64,22 +64,22 @@ class LGShareMoreView: UIView {
             let row = i / 4
             let column = i % 4
             
-            let button = UIButton(type: .Custom)
+            let button = UIButton(type: .custom)
             button.tag = i + 1
-            button.addTarget(target, action: selector, forControlEvents: .TouchUpInside)
+            button.addTarget(target, action: selector, for: .touchUpInside)
             
             let image = shareMoreType(rawValue: i + 1)?.imageForType().0
             let title = shareMoreType(rawValue: i + 1)?.imageForType().1
             
-            button.setImage(image, forState: .Normal)
-            button.setTitleColor(UIColor.blackColor(), forState: .Normal)
-            button.setTitle(title, forState: .Normal)
+            button.setImage(image, for: .normal)
+            button.setTitleColor(UIColor.black, for: .normal)
+            button.setTitle(title, for: .normal)
             
 //            button.titleEdgeInsets = UIEdgeInsetsMake(53, -59, 0, 0)
 //            button.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 21, 0)
             
-            button.setBackgroundImage(UIImage(named: "sharemore_otherDown"), forState: .Normal)
-            button.setBackgroundImage(UIImage(named: "sharemore_otherDownHL"), forState: .Highlighted)
+            button.setBackgroundImage(UIImage(named: "sharemore_otherDown"), for: .normal)
+            button.setBackgroundImage(UIImage(named: "sharemore_otherDownHL"), for: .highlighted)
             
             let buttonX = CGFloat(marginW) + (buttonH + marginX) * CGFloat(column)
             let buttonY = CGFloat(marginH) + (buttonH + CGFloat(marginH)) * CGFloat(row)

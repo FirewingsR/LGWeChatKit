@@ -15,16 +15,16 @@ let indicatorViewH: CGFloat = 120
 
 let messageOutSound: SystemSoundID = {
     var soundID: SystemSoundID = 10120
-    let soundUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), "MessageOutgoing", "aiff", nil)
-    AudioServicesCreateSystemSoundID(soundUrl, &soundID)
+    let soundUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), "MessageOutgoing" as CFString, "aiff" as CFString, nil)
+    AudioServicesCreateSystemSoundID(soundUrl!, &soundID)
     return soundID
 }()
 
 
 let messageInSound: SystemSoundID = {
     var soundID: SystemSoundID = 10121
-    let soundUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), "MessageIncoming", "aiff", nil)
-    AudioServicesCreateSystemSoundID(soundUrl, &soundID)
+    let soundUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), "MessageIncoming" as CFString, "aiff" as CFString, nil)
+    AudioServicesCreateSystemSoundID(soundUrl!, &soundID)
     return soundID
 }()
 
@@ -63,18 +63,18 @@ class LGConversationViewController: UIViewController, UITableViewDataSource, UIT
         view.backgroundColor = UIColor(patternImage: UIImage(named: "bg3")!)
         
         tableView = UITableView()
-        tableView.backgroundColor = UIColor.clearColor()
-        tableView.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
+        tableView.backgroundColor = UIColor.clear
+        tableView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         tableView.delegate = self
         tableView.dataSource  = self
         tableView.estimatedRowHeight = 44.0
-        tableView.contentInset = UIEdgeInsetsMake(0, 0, toolBarMinHeight / 2, 0)
-        tableView.separatorStyle = .None
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: toolBarMinHeight / 2, right: 0)
+        tableView.separatorStyle = .none
         
-        tableView.registerClass(LGChatImageCell.self, forCellReuseIdentifier: NSStringFromClass(LGChatImageCell))
-        tableView.registerClass(LGChatTextCell.self, forCellReuseIdentifier: NSStringFromClass(LGChatTextCell))
-        tableView.registerClass(LGChatVoiceCell.self, forCellReuseIdentifier: NSStringFromClass(LGChatVoiceCell))
-        tableView.registerClass(LGChatVideoCell.self, forCellReuseIdentifier: NSStringFromClass(LGChatVideoCell))
+        tableView.register(LGChatImageCell.self, forCellReuseIdentifier: NSStringFromClass(LGChatImageCell.self))
+        tableView.register(LGChatTextCell.self, forCellReuseIdentifier: NSStringFromClass(LGChatTextCell.self))
+        tableView.register(LGChatVoiceCell.self, forCellReuseIdentifier: NSStringFromClass(LGChatVoiceCell.self))
+        tableView.register(LGChatVideoCell.self, forCellReuseIdentifier: NSStringFromClass(LGChatVideoCell.self))
         
         view.addSubview(tableView)
         
@@ -92,51 +92,51 @@ class LGConversationViewController: UIViewController, UITableViewDataSource, UIT
         tableView.translatesAutoresizingMaskIntoConstraints = false
         toolBarView.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addConstraint(NSLayoutConstraint(item: toolBarView, attribute: .Left, relatedBy: .Equal, toItem: view, attribute: .Left, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: toolBarView, attribute: .Right, relatedBy: .Equal, toItem: view, attribute: .Right, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: toolBarView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .Height, multiplier: 1, constant: toolBarMinHeight))
-        toolBarConstranit = NSLayoutConstraint(item: toolBarView, attribute: .Bottom, relatedBy: .Equal, toItem: view, attribute: .Bottom, multiplier: 1, constant: 0)
+        view.addConstraint(NSLayoutConstraint(item: toolBarView, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: toolBarView, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: toolBarView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: toolBarMinHeight))
+        toolBarConstranit = NSLayoutConstraint(item: toolBarView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: 0)
         view.addConstraint(toolBarConstranit)
         
-        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Left, relatedBy: .Equal, toItem: view, attribute: .Left, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Right, relatedBy: .Equal, toItem: view, attribute: .Right, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Top, relatedBy: .Equal, toItem: view, attribute: .Top, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Bottom, relatedBy: .Equal, toItem: toolBarView, attribute: .Top, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .bottom, relatedBy: .equal, toItem: toolBarView, attribute: .top, multiplier: 1, constant: 0))
         
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapTableView:"))
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardChange:", name: UIKeyboardWillChangeFrameNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "hiddenMenuController:", name: UIMenuControllerWillHideMenuNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: "keyboardChange:", name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: "hiddenMenuController:", name: UIMenuController.willHideMenuNotification, object: nil)
     }
     
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         if player != nil {
-            if player.audioPlayer.playing {
+            if player.audioPlayer.isPlaying {
                 player.stopPlaying()
             }
         }
     }
     
     // show menuController
-    override func canBecomeFirstResponder() -> Bool {
+    override var canBecomeFirstResponder: Bool {
         return true
     }
     
     // MARK: - tableView dataSource/Delegate
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messageList.count
     }
     
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell: LGChatBaseCell
         
@@ -144,13 +144,13 @@ class LGConversationViewController: UIViewController, UITableViewDataSource, UIT
         
         switch message.messageType {
         case .Text:
-            cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(LGChatTextCell), forIndexPath: indexPath) as! LGChatTextCell
+            cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(LGChatTextCell.self), for: indexPath) as! LGChatTextCell
         case .Image:
-            cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(LGChatImageCell), forIndexPath: indexPath) as! LGChatImageCell
+            cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(LGChatImageCell.self), for: indexPath) as! LGChatImageCell
         case .Voice:
-            cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(LGChatVoiceCell), forIndexPath: indexPath) as! LGChatVoiceCell
+            cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(LGChatVoiceCell.self), for: indexPath) as! LGChatVoiceCell
         case .Video:
-            cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(LGChatVideoCell), forIndexPath: indexPath) as! LGChatVideoCell
+            cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(LGChatVideoCell.self), for: indexPath) as! LGChatVideoCell
         }
         
         // add gustureRecognizer to show menu items
@@ -164,33 +164,33 @@ class LGConversationViewController: UIViewController, UITableViewDataSource, UIT
         if indexPath.row > 0 {
             let preMessage = messageList[indexPath.row - 1]
             if preMessage.dataString == message.dataString {
-                cell.timeLabel.hidden = true
+                cell.timeLabel.isHidden = true
             } else {
-                cell.timeLabel.hidden = false
+                cell.timeLabel.isHidden = false
             }
         }
 
-        cell.setMessage(message)
+        cell.setMessage(message: message)
         
         return cell
     }
     
     
-    func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
+    func tableView(tableView: UITableView, willSelectRowAtindexPath: IndexPath) -> IndexPath? {
         return nil
     }
     
     func scrollToBottom() {
-        let numberOfRows = tableView.numberOfRowsInSection(0)
+        let numberOfRows = tableView.numberOfRows(inSection: 0)
         if numberOfRows > 0 {
-            tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: numberOfRows - 1, inSection: 0), atScrollPosition: .Bottom, animated: true)
+            tableView.scrollToRow(at: IndexPath(row: numberOfRows - 1, section: 0), at: .bottom, animated: true)
         }
     }
     
     func reloadTableView() {
         let count = messageList.count
         tableView.beginUpdates()
-        tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: count - 1, inSection: 0)], withRowAnimation: .Top)
+        tableView.insertRows(at: [IndexPath(row: count - 1, section: 0)], with: .top)
         tableView.endUpdates()
        scrollToBottom()
     }
@@ -207,18 +207,18 @@ class LGConversationViewController: UIViewController, UITableViewDataSource, UIT
     
     // MARK: - keyBoard notification
     func keyboardChange(notification: NSNotification) {
-        let userInfo = notification.userInfo as NSDictionary!
-        let newFrame = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
-        let animationTimer = (userInfo[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
+        let userInfo = notification.userInfo as! NSDictionary
+        let newFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+        let animationTimer = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as! NSNumber).doubleValue
         
         view.layoutIfNeeded()
-        if newFrame.origin.y == UIScreen.mainScreen().bounds.size.height {
-            UIView.animateWithDuration(animationTimer, animations: { () -> Void in
+        if newFrame.origin.y == UIScreen.main.bounds.size.height {
+            UIView.animate(withDuration: animationTimer, animations: { () -> Void in
                 self.toolBarConstranit.constant = 0
                 self.view.layoutIfNeeded()
             })
         } else {
-            UIView.animateWithDuration(animationTimer, animations: { () -> Void in
+            UIView.animate(withDuration: animationTimer, animations: { () -> Void in
                self.toolBarConstranit.constant = -newFrame.size.height
                 self.scrollToBottom()
                 self.view.layoutIfNeeded()
@@ -230,17 +230,17 @@ class LGConversationViewController: UIViewController, UITableViewDataSource, UIT
     
     func showMenuAction(gestureRecognizer: UITapGestureRecognizer) {
         let twoTaps = (gestureRecognizer.numberOfTapsRequired == 2)
-        let doubleTap = (twoTaps && gestureRecognizer.state == .Ended)
-        let longPress = (!twoTaps && gestureRecognizer.state == .Began)
+        let doubleTap = (twoTaps && gestureRecognizer.state == .ended)
+        let longPress = (!twoTaps && gestureRecognizer.state == .began)
         
         if doubleTap || longPress {
-            let pressIndexPath = tableView.indexPathForRowAtPoint(gestureRecognizer.locationInView(tableView))!
-            tableView.selectRowAtIndexPath(pressIndexPath, animated: false, scrollPosition: .None)
+            let pressIndexPath = tableView.indexPathForRow(at: gestureRecognizer.location(in: tableView))!
+            tableView.selectRow(at: pressIndexPath, animated: false, scrollPosition: .none)
             
-            let menuController = UIMenuController.sharedMenuController()
+            let menuController = UIMenuController.shared
             let localImageView = gestureRecognizer.view!
             
-            menuController.setTargetRect(localImageView.frame, inView: localImageView.superview!)
+            menuController.setTargetRect(localImageView.frame, in: localImageView.superview!)
             menuController.menuItems = [UIMenuItem(title: "复制", action: "copyAction:"), UIMenuItem(title: "转发", action: "transtionAction:"), UIMenuItem(title: "删除", action: "deleteAction:"), UIMenuItem(title: "更多", action: "moreAciton:")]
            
             menuController.setMenuVisible(true, animated: true)
@@ -250,7 +250,7 @@ class LGConversationViewController: UIViewController, UITableViewDataSource, UIT
     func copyAction(menuController: UIMenuController) {
         if let selectedIndexPath = tableView.indexPathForSelectedRow {
             if let message = messageList[selectedIndexPath.row] as? textMessage {
-                UIPasteboard.generalPasteboard().string = message.text
+                UIPasteboard.general.string = message.text
             }
         }
     }
@@ -261,7 +261,7 @@ class LGConversationViewController: UIViewController, UITableViewDataSource, UIT
     
     func deleteAction(menuController: UIMenuController) {
         if let selectedIndexPath = tableView.indexPathForSelectedRow {
-            messageList.removeAtIndex(selectedIndexPath.row)
+            messageList.remove(at: selectedIndexPath.row)
             tableView.reloadData()
         }
     }
@@ -272,7 +272,7 @@ class LGConversationViewController: UIViewController, UITableViewDataSource, UIT
     
     func hiddenMenuController(notifiacation: NSNotification) {
         if let selectedIndexpath = tableView.indexPathForSelectedRow {
-            tableView.deselectRowAtIndexPath(selectedIndexpath, animated: false)
+            tableView.deselectRow(at: selectedIndexpath, animated: false)
         }
         (notifiacation.object as! UIMenuController).menuItems = nil
     }
@@ -281,13 +281,13 @@ class LGConversationViewController: UIViewController, UITableViewDataSource, UIT
     func tapTableView(gestureRecognizer: UITapGestureRecognizer) {
         self.view.endEditing(true)
         toolBarConstranit.constant = 0
-        toolBarView.showEmotion(false)
-        toolBarView.showMore(false)
+        toolBarView.showEmotion(show: false)
+        toolBarView.showMore(show: false)
     }
     
     func clickCellAction(gestureRecognizer: UITapGestureRecognizer) {
-        let pressIndexPath = tableView.indexPathForRowAtPoint(gestureRecognizer.locationInView(tableView))!
-        let pressCell = tableView.cellForRowAtIndexPath(pressIndexPath)
+        let pressIndexPath = tableView.indexPathForRow(at: gestureRecognizer.location(in: tableView))!
+        let pressCell = tableView.cellForRow(at: pressIndexPath)
         let message = messageList[pressIndexPath.row]
         
         if message.messageType == .Voice {
@@ -295,20 +295,23 @@ class LGConversationViewController: UIViewController, UITableViewDataSource, UIT
             let cell = pressCell as! LGChatVoiceCell
             let play = LGAudioPlayer()
             player = play
-            player.startPlaying(message)
+            player.startPlaying(message: message)
             cell.beginAnimation()
-
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(message.voiceTime.intValue) * 1000 * 1000 * 1000), dispatch_get_main_queue(), { () -> Void in
+            
+            let time = Int64(message.voiceTime.intValue) * 1000 * 1000 * 1000
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Int(time)), execute: {
                 cell.stopAnimation()
             })
+            
         } else if message.messageType == .Video {
             let message = message as! videoMessage
             if videoController != nil {
                 videoController = nil
             }
             videoController = LGVideoController()
-            videoController.setPlayUrl(message.url)
-            presentViewController(videoController, animated: true, completion: nil)
+            videoController.setPlayUrl(url: message.url)
+            present(videoController, animated: true, completion: nil)
         }
     }
 }
@@ -318,19 +321,19 @@ class LGConversationViewController: UIViewController, UITableViewDataSource, UIT
 extension LGConversationViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate, LGAudioRecorderDelegate, LGEmotionViewDelegate, LGImagePickControllerDelegate, LGMapViewControllerDelegate {
 
     func voiceClick(button: UIButton) {
-        if toolBarView.recordButton.hidden == false {
-            toolBarView.showRecord(false)
+        if toolBarView.recordButton.isHidden == false {
+            toolBarView.showRecord(show: false)
         } else {
-            toolBarView.showRecord(true)
+            toolBarView.showRecord(show: true)
             self.view.endEditing(true)
         }
     }
     
     func recordClick(button: UIButton) {
-        button.setTitle("松开     结束", forState: .Normal)
-        button.addTarget(self, action: "recordComplection:", forControlEvents: .TouchUpInside)
-        button.addTarget(self, action: "recordDragOut:", forControlEvents: .TouchDragOutside)
-        button.addTarget(self, action: "recordCancel:", forControlEvents: .TouchUpOutside)
+        button.setTitle("松开     结束", for: .normal)
+        button.addTarget(self, action: "recordComplection:", for: .touchUpInside)
+        button.addTarget(self, action: "recordDragOut:", for: .touchDragOutside)
+        button.addTarget(self, action: "recordCancel:", for: .touchUpOutside)
         
         let currentTime = NSDate().timeIntervalSinceReferenceDate
         let record = LGAudioRecorder(fileName: "\(currentTime).wav")
@@ -343,15 +346,15 @@ extension LGConversationViewController: UIImagePickerControllerDelegate, UINavig
     }
     
     func recordComplection(button: UIButton) {
-        button.setTitle("按住     说话", forState: .Normal)
+        button.setTitle("按住     说话", for: .normal)
         recorder.stopRecord()
         recorder.delegate = nil
         recordIndicatorView.removeFromSuperview()
         recordIndicatorView = nil
         
         if recorder.timeInterval != nil {
-            let message = voiceMessage(incoming: false, sentDate: NSDate(), iconName: "", voicePath: recorder.recorder.url, voiceTime: recorder.timeInterval)
-            let receiveMessage = voiceMessage(incoming: true, sentDate: NSDate(), iconName: "", voicePath: recorder.recorder.url, voiceTime: recorder.timeInterval)
+            let message = voiceMessage(incoming: false, sentDate: NSDate(), iconName: "", voicePath: recorder.recorder.url as NSURL, voiceTime: recorder.timeInterval)
+            let receiveMessage = voiceMessage(incoming: true, sentDate: NSDate(), iconName: "", voicePath: recorder.recorder.url as NSURL, voiceTime: recorder.timeInterval)
             
             messageList.append(message)
             reloadTableView()
@@ -362,13 +365,13 @@ extension LGConversationViewController: UIImagePickerControllerDelegate, UINavig
     }
     
     func recordDragOut(button: UIButton) {
-        button.setTitle("按住     说话", forState: .Normal)
-        recordIndicatorView.showText("松开手指,取消发送", textColor: UIColor.redColor())
+        button.setTitle("按住     说话", for: .normal)
+        recordIndicatorView.showText(text: "松开手指,取消发送", textColor: UIColor.red)
     }
     
     
     func recordCancel(button: UIButton) {
-        button.setTitle("按住     说话", forState: .Normal)
+        button.setTitle("按住     说话", for: .normal)
         recorder.stopRecord()
         recorder.delegate = nil
         recordIndicatorView.removeFromSuperview()
@@ -377,10 +380,10 @@ extension LGConversationViewController: UIImagePickerControllerDelegate, UINavig
     
     func emotionClick(button: UIButton) {
         if toolBarView.emotionButton.tag == 1 {
-            toolBarView.showEmotion(true)
+            toolBarView.showEmotion(show: true)
             toolBarView.textView.inputView = emojiView
         } else {
-            toolBarView.showEmotion(false)
+            toolBarView.showEmotion(show: false)
             toolBarView.textView.inputView = nil
         }
         toolBarView.textView.becomeFirstResponder()
@@ -389,10 +392,10 @@ extension LGConversationViewController: UIImagePickerControllerDelegate, UINavig
     
     func moreClick(button: UIButton) {
         if toolBarView.moreButton.tag == 2 {
-            toolBarView.showMore(true)
+            toolBarView.showMore(show: true)
             toolBarView.textView.inputView = shareView
         } else {
-            toolBarView.showMore(false)
+            toolBarView.showMore(show: false)
             toolBarView.textView.inputView = nil
         }
         
@@ -410,20 +413,20 @@ extension LGConversationViewController: UIImagePickerControllerDelegate, UINavig
             let imagePick = LGImagePickController()
             imagePick.delegate = self
             let nav = UINavigationController(rootViewController: imagePick)
-            self.presentViewController(nav, animated: true, completion: nil)
+            self.present(nav, animated: true, completion: nil)
         case .video:
-            let url = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("test", ofType: "m4v")!)
+            let url = NSURL(fileURLWithPath: Bundle.main.path(forResource: "test", ofType: "m4v")!)
             let message = videoMessage(incoming: false, sentDate: NSDate(), iconName: "", url: url)
             messageList.append(message)
             reloadTableView()
             AudioServicesPlayAlertSound(messageOutSound)
-            toolBarView.showMore(false)
+            toolBarView.showMore(show: false)
             self.view.endEditing(true)
         case .location:
             let mapCtrl = LGMapViewController()
             mapCtrl.delegate = self
             let nav = UINavigationController(rootViewController: mapCtrl)
-            self.presentViewController(nav, animated: true, completion: nil)
+            self.present(nav, animated: true, completion: nil)
         case .record:
             beginVideoRecord()
         default:
@@ -434,12 +437,12 @@ extension LGConversationViewController: UIImagePickerControllerDelegate, UINavig
     func beginVideoRecord() {
         videoRecordView = LGRecordVideoView(frame: CGRectMake(0, view.bounds.height * 0.4, view.bounds.width, view.bounds.height * 0.6))
         videoRecordBakgoundView = UIView(frame: view.bounds)
-        videoRecordBakgoundView.backgroundColor = UIColor.blackColor()
+        videoRecordBakgoundView.backgroundColor = UIColor.black
         videoRecordBakgoundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "videoBackgroundViewClick:"))
         videoRecordBakgoundView.alpha = 0.6
         videoRecordView.alpha = 1.0
         
-        UIView.animateWithDuration(0.35, animations: { () -> Void in
+        UIView.animate(withDuration: 0.35, animations: { () -> Void in
             self.view.endEditing(true)
             self.toolBarConstranit.constant = self.videoRecordView.bounds.height
             self.scrollToBottom()
@@ -454,7 +457,7 @@ extension LGConversationViewController: UIImagePickerControllerDelegate, UINavig
             self.messageList.append(message)
             self.reloadTableView()
             AudioServicesPlayAlertSound(messageOutSound)
-            self.toolBarView.showMore(false)
+            self.toolBarView.showMore(show: false)
             self.videoRecordComplection()
         }
         
@@ -469,7 +472,7 @@ extension LGConversationViewController: UIImagePickerControllerDelegate, UINavig
     
     func videoRecordComplection() {
         view.layoutIfNeeded()
-        UIView.animateWithDuration(0.35, animations: { () -> Void in
+        UIView.animate(withDuration: 0.35, animations: { () -> Void in
             self.videoRecordBakgoundView.bounds.y = self.view.bounds.height
             self.videoRecordView.bounds.y = self.view.bounds.height
             }) { (_) -> Void in
@@ -480,7 +483,7 @@ extension LGConversationViewController: UIImagePickerControllerDelegate, UINavig
                 self.toolBarConstranit.constant = 0
                 self.view.layoutIfNeeded()
         }
-        toolBarView.showMore(false)
+        toolBarView.showMore(show: false)
     }
     
     func sendImage(image: UIImage) {
@@ -492,53 +495,53 @@ extension LGConversationViewController: UIImagePickerControllerDelegate, UINavig
     
     // MARK: - UIImagePick delegate
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        toolBarView.showMore(false)
+        toolBarView.showMore(show: false)
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
-        toolBarView.showMore(false)
-        picker.dismissViewControllerAnimated(true, completion: nil)
+        toolBarView.showMore(show: false)
+        picker.dismiss(animated: true, completion: nil)
         
     }
     
     // MARK: - mapview delegate
     
     func mapViewController(controller: LGMapViewController, didSelectLocationSnapeShort image: UIImage) {
-        toolBarView.showMore(false)
-        sendImage(image)
+        toolBarView.showMore(show: false)
+        sendImage(image: image)
     }
     
     func mapViewController(controller: LGMapViewController, didCancel error: NSError?) {
-        toolBarView.showMore(false)
+        toolBarView.showMore(show: false)
     }
     
     // MARK: - imagePick delegate
     func imagePickerController(picker: LGImagePickController, didFinishPickingImages images: [UIImage]) {
-        toolBarView.showMore(false)
+        toolBarView.showMore(show: false)
         for image in images {
-            sendImage(image)
+            sendImage(image: image)
         }
     }
     
     func imagePickerControllerCanceled(picker: LGImagePickController) {
-        toolBarView.showMore(false)
+        toolBarView.showMore(show: false)
     }
     
     // MARK: - emojiDelegate
     func selectEmoji(code: String, description: String, delete: Bool) {
         if delete {
-            let range = Range(start: toolBarView.textView.text.endIndex.advancedBy(-1), end: toolBarView.textView.text.endIndex)
-            toolBarView.textView.text.removeRange(range)
+            let range: Range = toolBarView.textView.text.index(toolBarView.textView.text.endIndex, offsetBy: -1) ..< toolBarView.textView.text.endIndex
+            toolBarView.textView.text.removeSubrange(range)
         } else {
-            toolBarView.textView.text.appendContentsOf(code)
+            toolBarView.textView.text.append(contentsOf: code)
         }
     }
     
     // MARK: - textViewDelegate
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
-            let messageStr = textView.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-            if messageStr.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) == 0 {
+            let messageStr = textView.text.trimmingCharacters(in: NSCharacterSet.whitespaces)
+            if messageStr.lengthOfBytes(using: String.Encoding(rawValue: NSUTF8StringEncoding)) == 0 {
                 return true
             }
             
@@ -559,7 +562,7 @@ extension LGConversationViewController: UIImagePickerControllerDelegate, UINavig
     // MARK: -LGrecordDelegate
     func audioRecorderUpdateMetra(metra: Float) {
         if recordIndicatorView != nil {
-         recordIndicatorView.updateLevelMetra(metra)
+            recordIndicatorView.updateLevelMetra(levelMetra: metra)
         }
     }
 }

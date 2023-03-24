@@ -9,35 +9,35 @@
 import UIKit
 
 class LGDismissAnimationController: NSObject, UIViewControllerAnimatedTransitioning {
-    func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.2
     }
     
-    func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-        let toCtrl = (transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey) as! UINavigationController).topViewController as! UICollectionViewController
-        let fromView = transitionContext.viewForKey(UITransitionContextFromViewKey)
-        let toView = transitionContext.viewForKey(UITransitionContextToViewKey)
-        let containertView = transitionContext.containerView()
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        let toCtrl = (transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to) as! UINavigationController).topViewController as! UICollectionViewController
+        let fromView = transitionContext.view(forKey: UITransitionContextViewKey.from)
+        let toView = transitionContext.view(forKey: UITransitionContextViewKey.to)
+        let containertView = transitionContext.containerView
    
-        let layoutAttrubute = toCtrl.collectionView?.layoutAttributesForItemAtIndexPath((toCtrl.selectedIndexPath)!)
-        let selectRect = toCtrl.collectionView?.convertRect((layoutAttrubute?.frame)!, toView: toCtrl.collectionView?.superview)
+        let layoutAttrubute = toCtrl.collectionView?.layoutAttributesForItem(at: (toCtrl.selectedIndexPath)!)
+        let selectRect = toCtrl.collectionView?.convert((layoutAttrubute?.frame)!, to: toCtrl.collectionView?.superview)
         
         toView?.alpha = 0.5
-        containertView?.addSubview(toView!)
-        containertView?.sendSubviewToBack(toView!)
+        containertView.addSubview(toView!)
+        containertView.sendSubviewToBack(toView!)
         
-        let snapshotView = fromView?.snapshotViewAfterScreenUpdates(false)
+        let snapshotView = fromView?.snapshotView(afterScreenUpdates: false)
         snapshotView?.frame = (fromView?.frame)!
-        containertView?.addSubview(snapshotView!)
+        containertView.addSubview(snapshotView!)
 
         fromView?.removeFromSuperview()
         
-        UIView.animateWithDuration(transitionDuration(transitionContext), animations: { () -> Void in
+        UIView.animate(withDuration: transitionDuration(using: transitionContext), animations: { () -> Void in
             snapshotView?.frame = selectRect!
             toView?.alpha = 1
             }) { (finish) -> Void in
                 snapshotView?.removeFromSuperview()
-                transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
     }
 }

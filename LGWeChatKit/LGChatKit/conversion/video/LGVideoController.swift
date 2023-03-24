@@ -20,7 +20,7 @@ class LGVideoController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         playView = LGAVPlayView(frame: view.bounds)
          view.addSubview(playView)
-        playView.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
+         playView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -37,7 +37,7 @@ class LGVideoController: UIViewController {
     
     func tapView(gesture: UITapGestureRecognizer) {
         removeConfigure()
-        dismissViewControllerAnimated(true) { () -> Void in
+        dismiss(animated: true) { () -> Void in
         }
     }
 
@@ -51,7 +51,7 @@ class LGVideoController: UIViewController {
     }
     
     func removeConfigure() {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
         playItem.removeObserver(self, forKeyPath: "status", context: nil)
         if let observer = timerObserver {
             let layer = playView.layer as! AVPlayerLayer
@@ -64,7 +64,7 @@ class LGVideoController: UIViewController {
     // MARK: - 初始化配置
     
     func setPlayUrl(url: NSURL) {
-        playItem = AVPlayerItem(URL: url)
+        playItem = AVPlayerItem(url: url as URL)
         configurationItem()
     }
     
@@ -78,19 +78,18 @@ class LGVideoController: UIViewController {
         let layer = playView.layer as! AVPlayerLayer
         layer.player = play
         
-        playItem.addObserver(self, forKeyPath: "status", options: .New, context: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "videoPlayDidEnd:", name: AVPlayerItemDidPlayToEndTimeNotification, object: nil)
+        playItem.addObserver(self, forKeyPath: "status", options: .new, context: nil)
+        NotificationCenter.default.addObserver(self, selector: "videoPlayDidEnd:", name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
     }
     
-    
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "status" {
-            if playItem.status == .ReadyToPlay {
+            if playItem.status == .readyToPlay {
                 let dutation = playItem.duration
                 let totalSecond = CGFloat(playItem.duration.value) / CGFloat(playItem.duration.timescale)
-                totalTimer = converTimer(totalSecond)
-                configureSlider(dutation)
-                monitoringPlayback(self.playItem)
+                totalTimer = converTimer(time: totalSecond)
+                configureSlider(duration: dutation)
+                monitoringPlayback(item: self.playItem)
                 
                 let layer = playView.layer as! AVPlayerLayer
                 layer.player?.play()
@@ -99,7 +98,7 @@ class LGVideoController: UIViewController {
     }
     
     func videoPlayDidEnd(notifation: NSNotification) {
-        playItem.seekToTime(CMTimeMake(0, 1))
+        playItem.seek(to: CMTimeMake(value: 0, timescale: 1))
         let layer = playView.layer as! AVPlayerLayer
         layer.player?.play()
     }
@@ -108,13 +107,13 @@ class LGVideoController: UIViewController {
     
     func converTimer(time: CGFloat) -> String {
         let date = NSDate(timeIntervalSince1970: Double(time))
-        let dateFormat = NSDateFormatter()
+        let dateFormat = DateFormatter()
         if time / 3600 >= 1 {
             dateFormat.dateFormat = "HH:mm:ss"
         } else {
             dateFormat.dateFormat = "mm:ss"
         }
-        let formatTime = dateFormat.stringFromDate(date)
+        let formatTime = dateFormat.string(from: date as Date)
         
         return formatTime
     }
@@ -126,11 +125,11 @@ class LGVideoController: UIViewController {
     
     func monitoringPlayback(item: AVPlayerItem) {
         let layer = playView.layer as! AVPlayerLayer
-        timerObserver = layer.player!.addPeriodicTimeObserverForInterval(CMTimeMake(1, 1), queue: nil, usingBlock: { (time) -> Void in
+        timerObserver = layer.player!.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 1), queue: nil, using: { (time) -> Void in
             let currentSecond = item.currentTime().value / Int64(item.currentTime().timescale)
             self.playView.slider.setValue(Float(currentSecond), animated: true)
-            let timeStr = self.converTimer(CGFloat(currentSecond))
+            let timeStr = self.converTimer(time: CGFloat(currentSecond))
             self.playView.timerIndicator.text = "\(timeStr)/\(self.totalTimer)"
-        })
+        }) as AnyObject
     }
 }

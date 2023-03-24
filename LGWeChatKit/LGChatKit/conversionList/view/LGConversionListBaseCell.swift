@@ -8,7 +8,7 @@
 import UIKit
 
 public enum LGCellStatus: Int {
-    case Center = 1, Left, Right
+    case center = 1, left, right
 }
 
 
@@ -18,10 +18,10 @@ protocol LGConversionListBaseCellDelegate {
 }
 
 class LGCellScrollView: UIScrollView, UIGestureRecognizerDelegate {
-    override func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer == self.panGestureRecognizer {
             let gesture = gestureRecognizer as! UIPanGestureRecognizer
-            let translation = gesture.translationInView(gestureRecognizer.view)
+            let translation = gesture.translation(in: gestureRecognizer.view)
             return fabs(translation.y) <= fabs(translation.x)
         } else {
             return true
@@ -29,9 +29,9 @@ class LGCellScrollView: UIScrollView, UIGestureRecognizerDelegate {
     }
    
     func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer.isKindOfClass(UIPanGestureRecognizer.self) {
+        if gestureRecognizer.isKind(of: UIPanGestureRecognizer.self) {
             let gesture = gestureRecognizer as! UIPanGestureRecognizer
-            let velocity = gesture.velocityInView(gestureRecognizer.view).y
+            let velocity = gesture.velocity(in: gestureRecognizer.view).y
             
             return fabs(velocity) <= 0.20
         }
@@ -47,8 +47,8 @@ class LGConversionListBaseCell: UITableViewCell {
             if newValue != nil {
                 removeOldTableViewPanObserver()
                 tableViewpPanGesture = newValue.panGestureRecognizer
-                newValue.directionalLockEnabled = true
-                tapGesture.requireGestureRecognizerToFail(newValue.panGestureRecognizer)
+                newValue.isDirectionalLockEnabled = true
+                tapGesture.require(toFail: newValue.panGestureRecognizer)
             }
         }
         didSet {
@@ -74,7 +74,7 @@ class LGConversionListBaseCell: UITableViewCell {
     var delegate: LGConversionListBaseCellDelegate?
     
     var tableViewpPanGesture: UIPanGestureRecognizer!
-    var cellStatus: LGCellStatus = .Center
+    var cellStatus: LGCellStatus = .center
     var cellScrollView: LGCellScrollView!
     var containtCellView: UIView!
     
@@ -93,11 +93,11 @@ class LGConversionListBaseCell: UITableViewCell {
     
     // MARK: - lifecycle
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         cellScrollView = LGCellScrollView()
         cellScrollView.delegate = self
-        cellScrollView.scrollEnabled = true
+        cellScrollView.isScrollEnabled = true
         cellScrollView.scrollsToTop = false
         cellScrollView.showsHorizontalScrollIndicator = false
         cellScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -105,15 +105,15 @@ class LGConversionListBaseCell: UITableViewCell {
         cellScrollView.addSubview(containtCellView)
         containtCellView.tag = 10010
         let cellSubViews = subviews
-        insertSubview(cellScrollView, atIndex: 0)
+        insertSubview(cellScrollView, at: 0)
         for subView in cellSubViews {
             containtCellView.addSubview(subView)
         }
         
-        addConstraints([NSLayoutConstraint(item: cellScrollView, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: cellScrollView, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: cellScrollView, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: cellScrollView, attribute: .Right, relatedBy: .Equal, toItem: self, attribute: .Right, multiplier: 1, constant: 0)])
+        addConstraints([NSLayoutConstraint(item: cellScrollView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: cellScrollView, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: cellScrollView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: cellScrollView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: 0)])
         
         tapGesture = UITapGestureRecognizer(target: self, action: "scrollViewTapped:")
         tapGesture.delegate = self
@@ -128,39 +128,39 @@ class LGConversionListBaseCell: UITableViewCell {
         
         leftButtonContainView = UIView()
         leftButtonContainView.tag = 10030
-        leftConstraint = NSLayoutConstraint(item: leftButtonContainView, attribute: .Right, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 1, constant: 0)
+        leftConstraint = NSLayoutConstraint(item: leftButtonContainView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1, constant: 0)
         leftButtonView = LGButtonView(buttons: [UIButton](), parentCell: self, buttonSelector: Selector("leftButtonHandle:"))
     
         rightButtonContainView = UIView(frame: bounds)
         rightButtonContainView.tag = 10020
-        rightConstraint = NSLayoutConstraint(item: rightButtonContainView, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Right, multiplier: 1, constant: 0)
+        rightConstraint = NSLayoutConstraint(item: rightButtonContainView, attribute: .left, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: 0)
         rightButtonView = LGButtonView(buttons: [UIButton](), parentCell: self, buttonSelector: Selector("rightButtonHandler:"))
         
         let containViews = [rightButtonContainView, leftButtonContainView]
         let containLayout = [rightConstraint, leftConstraint]
         let buttonViews = [rightButtonView, leftButtonView]
-        let layoutAttributes = [NSLayoutAttribute.Right, NSLayoutAttribute.Left]
+        let layoutAttributes = [NSLayoutConstraint.Attribute.right, NSLayoutConstraint.Attribute.left]
         
         for i in 0...1 {
             let clipView = containViews[i]
-            let clipConstraint = containLayout[i]
+            let clipConstraint: NSLayoutConstraint = containLayout[i]!
             let buttonView = buttonViews[i]
             let layoutAttribute = layoutAttributes[i]
             
-            clipConstraint.priority = UILayoutPriorityDefaultHigh
-            clipView.translatesAutoresizingMaskIntoConstraints = false
-            clipView.clipsToBounds = true
+            clipConstraint.priority = UILayoutPriority.defaultHigh
+            clipView?.translatesAutoresizingMaskIntoConstraints = false
+            clipView?.clipsToBounds = true
             
-            cellScrollView.addSubview(clipView)
-            addConstraints([NSLayoutConstraint(item: clipView, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1, constant: 0),
-                NSLayoutConstraint(item: clipView, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1, constant: 0),
-                NSLayoutConstraint(item: clipView, attribute: layoutAttribute, relatedBy: .Equal, toItem: self, attribute: layoutAttribute, multiplier: 1, constant: 0), clipConstraint])
+            cellScrollView.addSubview(clipView!)
+            addConstraints([NSLayoutConstraint(item: clipView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: clipView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: clipView, attribute: layoutAttribute, relatedBy: .equal, toItem: self, attribute: layoutAttribute, multiplier: 1, constant: 0), clipConstraint])
             
-            clipView.addSubview(buttonView)
-            addConstraints([NSLayoutConstraint(item: buttonView, attribute: .Top, relatedBy: .Equal, toItem: clipView, attribute: .Top, multiplier: 1, constant: 0),
-                NSLayoutConstraint(item: buttonView, attribute: .Bottom, relatedBy: .Equal, toItem: clipView, attribute: .Bottom, multiplier: 1, constant: 0),
-                NSLayoutConstraint(item: buttonView, attribute: layoutAttribute, relatedBy: .Equal, toItem: clipView, attribute: layoutAttribute, multiplier: 1, constant: 0),
-                NSLayoutConstraint(item: buttonView, attribute: .Width, relatedBy: .LessThanOrEqual, toItem: self.contentView, attribute: .Width, multiplier: 1, constant: -90)])
+            clipView?.addSubview(buttonView!)
+            addConstraints([NSLayoutConstraint(item: buttonView, attribute: .top, relatedBy: .equal, toItem: clipView, attribute: .top, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: buttonView, attribute: .bottom, relatedBy: .equal, toItem: clipView, attribute: .bottom, multiplier: 1, constant: 0),
+                NSLayoutConstraint(item: buttonView, attribute: layoutAttribute, relatedBy: .equal, toItem: clipView, attribute: layoutAttribute, multiplier: 1, constant: 0),
+                            NSLayoutConstraint(item: buttonView, attribute: .width, relatedBy: .lessThanOrEqual, toItem: self.contentView, attribute: .width, multiplier: 1, constant: -90)])
         }
     }
 
@@ -183,17 +183,16 @@ class LGConversionListBaseCell: UITableViewCell {
         }
         tableViewpPanGesture.removeObserver(self, forKeyPath: tableViewKeyPath)
     }
-
     
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if let path = keyPath {
             if path == tableViewKeyPath {
-                if object === tableViewpPanGesture {
-                    let locationTableView = tableViewpPanGesture.locationInView(containingTableView)
+                if object as AnyObject === tableViewpPanGesture {
+                    let locationTableView = tableViewpPanGesture.location(in: containingTableView)
                     let currentCell = CGRectContainsPoint(self.frame, locationTableView)
                     
-                    if !currentCell && cellStatus != .Center {
-                        hiddenButtonsAnimated(true)
+                    if !currentCell && cellStatus != .center {
+                        hiddenButtonsAnimated(animated: true)
                     }
                 }
             }
@@ -201,13 +200,13 @@ class LGConversionListBaseCell: UITableViewCell {
     }
     
     func setLeftButtons(buttons: [UIButton], width: CGFloat = 90) {
-        leftButtonView.setupButton(buttons, buttonWidth: width)
+        leftButtonView.setupButton(buttons: buttons, buttonWidth: width)
         leftButtonView.layoutIfNeeded()
         layoutIfNeeded()
     }
     
     func setRightButtons(buttons: [UIButton], width: CGFloat = 90) {
-        rightButtonView.setupButton(buttons, buttonWidth: width)
+        rightButtonView.setupButton(buttons: buttons, buttonWidth: width)
         rightButtonView.layoutIfNeeded()
         layoutIfNeeded()
     }
@@ -218,7 +217,7 @@ class LGConversionListBaseCell: UITableViewCell {
         containingTableView = nil
         var view = self.superview
         repeat {
-            if view!.isKindOfClass(UITableView.self) {
+            if view!.isKind(of: UITableView.self) {
                 containingTableView = view as! UITableView
                 break
             }
@@ -234,8 +233,8 @@ class LGConversionListBaseCell: UITableViewCell {
         
         cellScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.frame) + totalButtonsWidth(), CGRectGetHeight(self.frame))
         
-        if !cellScrollView.tracking && !cellScrollView.decelerating {
-            cellScrollView.contentOffset = contentOffsetForCellStatus(cellStatus)
+        if !cellScrollView.isTracking && !cellScrollView.isDecelerating {
+            cellScrollView.contentOffset = contentOffsetForCellStatus(status: cellStatus)
         }
         
         updateCellStatus()
@@ -243,24 +242,26 @@ class LGConversionListBaseCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.hiddenButtonsAnimated(true)
+        self.hiddenButtonsAnimated(animated: true)
     }
     
-    override func didTransitionToState(state: UITableViewCellStateMask) {
-        super.didTransitionToState(state)
+    override func didTransition(to state: UITableViewCell.StateMask) {
+        super.didTransition(to: state)
         
-        if state == UITableViewCellStateMask.DefaultMask {
-            layoutSubviews()
-        }
+        print(state)
+        
+//        if state == UITableViewCell.StateMask.DefaultMask {
+//            layoutSubviews()
+//        }
     }
     
     // MARK: - selection handle
     
     func shouldHighlight() -> Bool {
         var shouldHighlight = true
-        if containingTableView.delegate!.respondsToSelector("tableView:shouldHighlightRowAtIndexPath:") {
-            let cellIndexPath = containingTableView.indexPathForCell(self)
-            shouldHighlight = (containingTableView.delegate?.tableView!(containingTableView, shouldHighlightRowAtIndexPath: cellIndexPath!))!
+        if containingTableView.delegate!.responds(to: "tableView:shouldHighlightRowAt:") {
+            let cellIndexPath = containingTableView.indexPath(for: self)
+            shouldHighlight = (containingTableView.delegate?.tableView!(containingTableView, shouldHighlightRowAt: cellIndexPath!))!
         }
         
         return shouldHighlight
@@ -268,12 +269,12 @@ class LGConversionListBaseCell: UITableViewCell {
     
     func scrollViewPress(gestureRecognizer: UIGestureRecognizer) {
         hiddenOtherCells()
-        if gestureRecognizer.state == .Began && !self.highlighted && self.shouldHighlight() {
+        if gestureRecognizer.state == .began && !self.isHighlighted && self.shouldHighlight() {
             setHighlighted(true, animated: false)
-        } else if gestureRecognizer.state == .Ended {
+        } else if gestureRecognizer.state == .ended {
             setHighlighted(false, animated: false)
-            scrollViewTapped(gestureRecognizer)
-        } else if gestureRecognizer.state == .Cancelled {
+            scrollViewTapped(gestureRecognizer: gestureRecognizer)
+        } else if gestureRecognizer.state == .cancelled {
             setHighlighted(false, animated: false)
         }
     }
@@ -282,52 +283,52 @@ class LGConversionListBaseCell: UITableViewCell {
         
         for cell in containingTableView.visibleCells {
             let newCell = cell as! LGConversionListBaseCell
-            if newCell != self && newCell.isKindOfClass(LGConversionListBaseCell.self) {
-                if newCell.cellStatus != .Center {
-                    newCell.hiddenButtonsAnimated(true)
+            if newCell != self && newCell.isKind(of: LGConversionListBaseCell.self) {
+                if newCell.cellStatus != .center {
+                    newCell.hiddenButtonsAnimated(animated: true)
                     break
                 }
             }
         }
         
-        if cellStatus == .Center {
-            if self.selected {
+        if cellStatus == .center {
+            if self.isSelected {
                 deselectCell()
-            } else if shouldHighlight() && !containingTableView.tracking && !containingTableView.decelerating {
+            } else if shouldHighlight() && !containingTableView.isTracking && !containingTableView.isDecelerating {
                 selectCell()
             }
         } else {
-            hiddenButtonsAnimated(true)
+            hiddenButtonsAnimated(animated: true)
         }
     }
     
     func selectCell() {
-        if cellStatus == .Center {
-            var cellIndexPath = containingTableView.indexPathForCell(self)
-            if containingTableView.delegate!.respondsToSelector("tableView:willSelectRowAtIndexPath:") {
-                cellIndexPath = containingTableView.delegate?.tableView!(containingTableView, willSelectRowAtIndexPath: cellIndexPath!)
+        if cellStatus == .center {
+            var cellIndexPath = containingTableView.indexPath(for: self)
+            if containingTableView.delegate!.responds(to: "tableView:willSelectRowAt:") {
+                cellIndexPath = containingTableView.delegate?.tableView!(containingTableView, willSelectRowAt: cellIndexPath!)
             }
             if cellIndexPath != nil {
-                containingTableView.selectRowAtIndexPath(cellIndexPath, animated: false, scrollPosition: .None)
-                if containingTableView.delegate!.respondsToSelector("tableView:didSelectRowAtIndexPath:") {
-                    containingTableView.delegate?.tableView!(containingTableView, didSelectRowAtIndexPath: cellIndexPath!)
+                containingTableView.selectRow(at: cellIndexPath, animated: false, scrollPosition: .none)
+                if containingTableView.delegate!.responds(to: "tableView:didSelectRowAt:") {
+                    containingTableView.delegate?.tableView!(containingTableView, didSelectRowAt: cellIndexPath!)
                 }
             }
         }
     }
     
     func deselectCell() {
-        if cellStatus == .Center {
-            var cellIndexPath = containingTableView.indexPathForCell(self)
-            if containingTableView.delegate!.respondsToSelector("tableView:willDeselectRowAtIndexPath:") {
-                cellIndexPath = containingTableView.delegate?.tableView!(containingTableView, willDeselectRowAtIndexPath: cellIndexPath!)
+        if cellStatus == .center {
+            var cellIndexPath = containingTableView.indexPath(for: self)
+            if containingTableView.delegate!.responds(to: "tableView:willDeselectRowAt:") {
+                cellIndexPath = containingTableView.delegate?.tableView!(containingTableView, willDeselectRowAt: cellIndexPath!)
             }
             
             if cellIndexPath != nil {
-                containingTableView.deselectRowAtIndexPath(cellIndexPath!, animated: false)
+                containingTableView.deselectRow(at: cellIndexPath!, animated: false)
                 
-                if containingTableView.delegate!.respondsToSelector("tableView:didDeselectRowAtIndexPath:") {
-                    containingTableView.delegate?.tableView!(containingTableView, didDeselectRowAtIndexPath: cellIndexPath!)
+                if containingTableView.delegate!.responds(to: "tableView:didDeselectRowAt:") {
+                    containingTableView.delegate?.tableView!(containingTableView, didDeselectRowAt: cellIndexPath!)
                 }
             }
         }
@@ -335,31 +336,31 @@ class LGConversionListBaseCell: UITableViewCell {
     
     // MARK: - buttons handling
     func rightButtonHandler(gestureRecognizer: LGButtonTapGestureRecognizer) {
-        delegate?.didSelectedRightButton(gestureRecognizer.buttonIndex)
-        hiddenButtonsAnimated(true)
+        delegate?.didSelectedRightButton(index: gestureRecognizer.buttonIndex)
+        hiddenButtonsAnimated(animated: true)
     }
     
     func leftButtonHandle(gestureRecognizer: LGButtonTapGestureRecognizer) {
-        delegate?.didSelectedLeftButton(gestureRecognizer.buttonIndex)
-        hiddenButtonsAnimated(true)
+        delegate?.didSelectedLeftButton(index: gestureRecognizer.buttonIndex)
+        hiddenButtonsAnimated(animated: true)
     }
     
     func hiddenButtonsAnimated(animated: Bool) {
-        if cellStatus != .Center {
-            cellScrollView.setContentOffset(contentOffsetForCellStatus(.Center), animated: animated)
+        if cellStatus != .center {
+            cellScrollView.setContentOffset(contentOffsetForCellStatus(status: .center), animated: animated)
         }
     }
     
     func showLeftButtonsAnimated(animated: Bool) {
-        if cellStatus != .Left {
-            cellScrollView.setContentOffset(contentOffsetForCellStatus(.Left), animated: animated)
+        if cellStatus != .left {
+            cellScrollView.setContentOffset(contentOffsetForCellStatus(status: .left), animated: animated)
         }
     }
     
     
     func showRightButtonsAnimated(animated: Bool) {
-        if cellStatus != .Right {
-            cellScrollView.setContentOffset(contentOffsetForCellStatus(.Right), animated: animated)
+        if cellStatus != .right {
+            cellScrollView.setContentOffset(contentOffsetForCellStatus(status: .right), animated: animated)
         }
     }
     
@@ -367,14 +368,14 @@ class LGConversionListBaseCell: UITableViewCell {
     func hiddenOtherCells() {
             for cell in containingTableView.visibleCells {
                 let newCell = cell as! LGConversionListBaseCell
-                if newCell != self && newCell.isKindOfClass(LGConversionListBaseCell.self) {
-                    newCell.hiddenButtonsAnimated(true)
+                if newCell != self && newCell.isKind(of: LGConversionListBaseCell.self) {
+                    newCell.hiddenButtonsAnimated(animated: true)
                 }
         }
     }
     
     func isButtonsHidden() -> Bool {
-        return cellStatus == .Center
+        return cellStatus == .center
     }
     
     // MARK: - help
@@ -395,11 +396,11 @@ class LGConversionListBaseCell: UITableViewCell {
         var tempPoint = CGPointZero
         
         switch status {
-        case .Center:
+        case .center:
             tempPoint.x = leftButtonsWidth()
-        case .Right:
+        case .right:
             tempPoint.x = totalButtonsWidth()
-        case .Left:
+        case .left:
             tempPoint.x = 0
         }
         return tempPoint
@@ -411,81 +412,80 @@ class LGConversionListBaseCell: UITableViewCell {
             return
         }
         
-        for newStatus in [LGCellStatus.Center, LGCellStatus.Left, LGCellStatus.Right] {
-            if CGPointEqualToPoint(cellScrollView.contentOffset, contentOffsetForCellStatus(newStatus)) {
+        for newStatus in [LGCellStatus.center, LGCellStatus.left, LGCellStatus.right] {
+            if CGPointEqualToPoint(cellScrollView.contentOffset, contentOffsetForCellStatus(status: newStatus)) {
                 cellStatus = newStatus
                 break
             }
         }
         
-        var frame = contentView.superview?.convertRect(contentView.frame, toView: self)
+        var frame = contentView.superview?.convert(contentView.frame, to: self)
         frame?.width = CGRectGetWidth(self.frame)
         
         leftConstraint.constant = max(0, CGRectGetMinX(frame!) - CGRectGetMinX(self.frame))
         rightConstraint.constant = min(0, CGRectGetMaxX(frame!) - CGRectGetMaxX(self.frame))
         
-        if self.editing {
+        if self.isEditing {
             leftConstraint.constant = 0
             cellScrollView.contentOffset = CGPointMake(leftButtonsWidth(), 0)
-            cellStatus = .Center
+            cellStatus = .center
         }
         
-        leftButtonContainView.hidden = (leftConstraint.constant == 0)
-        rightButtonContainView.hidden = (rightConstraint.constant == 0)
+        leftButtonContainView.isHidden = (leftConstraint.constant == 0)
+        rightButtonContainView.isHidden = (rightConstraint.constant == 0)
         
-        if self.accessoryType != .None && !self.editing {
+        if self.accessoryType != .none && !self.isEditing {
             let accesory = cellScrollView.superview?.subviews.last
             var accessoryFrame = accesory?.frame
-            accessoryFrame?.x = CGRectGetWidth(frame!) - CGRectGetWidth(accessoryFrame!) - CGFloat(15) + CGRectGetMinX(frame!)
+            accessoryFrame!.x = CGRectGetWidth(frame!) - CGRectGetWidth(accessoryFrame!) - CGFloat(15) + CGRectGetMinX(frame!)
             accesory?.frame = accessoryFrame!
         }
         
-        if !cellScrollView.dragging && !cellScrollView.decelerating {
-            tapGesture.enabled = true
-            longPressGesture.enabled = (cellStatus == .Center)
+        if !cellScrollView.isDragging && !cellScrollView.isDecelerating {
+            tapGesture.isEnabled = true
+            longPressGesture.isEnabled = (cellStatus == .center)
         } else {
-            tapGesture.enabled = false
-            longPressGesture.enabled = false
+            tapGesture.isEnabled = false
+            longPressGesture.isEnabled = false
         }
-        cellScrollView.scrollEnabled = !self.editing
+        cellScrollView.isScrollEnabled = !self.isEditing
     }
     
 }
 
 extension LGConversionListBaseCell: UIScrollViewDelegate {
     
-    func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         if velocity.x >= 0.5 {
-            if cellStatus == .Left || rightButtonsWidth() == 0 {
-                cellStatus = .Center
+            if cellStatus == .left || rightButtonsWidth() == 0 {
+                cellStatus = .center
             } else {
-                cellStatus = .Right
+                cellStatus = .right
             }
         } else if velocity.x <= -0.5 {
-            if cellStatus == .Right || leftButtonsWidth() == 0 {
-                cellStatus = .Center
+            if cellStatus == .right || leftButtonsWidth() == 0 {
+                cellStatus = .center
             } else {
-                cellStatus = .Left
+                cellStatus = .left
             }
         } else {
-            let leftThreshold = contentOffsetForCellStatus(.Left).x + leftButtonsWidth() * 0.8
-            let rightThreshold = contentOffsetForCellStatus(.Right).x - rightButtonsWidth() * 0.8
+            let leftThreshold = contentOffsetForCellStatus(status: .left).x + leftButtonsWidth() * 0.8
+            let rightThreshold = contentOffsetForCellStatus(status: .right).x - rightButtonsWidth() * 0.8
             
-            if targetContentOffset.memory.x > rightThreshold {
-                cellStatus = .Right
-            } else if targetContentOffset.memory.x < leftThreshold {
-                cellStatus = .Left
+            if targetContentOffset.pointee.x > rightThreshold {
+                cellStatus = .right
+            } else if targetContentOffset.pointee.x < leftThreshold {
+                cellStatus = .left
             } else {
-                cellStatus = .Center
+                cellStatus = .center
             }
         }
         
-        if cellStatus != .Center {
+        if cellStatus != .center {
             hiddenOtherCells()
         }
         
-        
-        targetContentOffset.memory = contentOffsetForCellStatus(cellStatus)
+        targetContentOffset.pointee = contentOffsetForCellStatus(status: cellStatus)
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -494,14 +494,14 @@ extension LGConversionListBaseCell: UIScrollViewDelegate {
                // scrollView.contentOffset = CGPointMake(leftButtonsWidth(), 0)
             } else {
                 scrollView.contentOffset = CGPointMake(leftButtonsWidth(), 0)
-                tapGesture.enabled = true
+                tapGesture.isEnabled = true
             }
         } else {
             if leftButtonsWidth() > 0 {
               //  scrollView.contentOffset = CGPointMake(leftButtonsWidth(), 0)
             } else {
                 scrollView.contentOffset = CGPointZero
-                tapGesture.enabled = true
+                tapGesture.isEnabled = true
             }
         }
         updateCellStatus()
@@ -519,14 +519,15 @@ extension LGConversionListBaseCell: UIScrollViewDelegate {
     
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if !decelerate {
-            tapGesture.enabled = true
+            tapGesture.isEnabled = true
         }
     }
 }
 
 
 extension LGConversionListBaseCell {
-    override func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    
+    override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         if (gestureRecognizer == containingTableView.panGestureRecognizer && otherGestureRecognizer == longPressGesture) || (gestureRecognizer == longPressGesture && otherGestureRecognizer == containingTableView.panGestureRecognizer) {
             return true
         } else {
@@ -534,8 +535,10 @@ extension LGConversionListBaseCell {
         }
     }
     
-    override func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
-        return !(touch.view!.isKindOfClass(UIControl.self))
+    
+    
+    override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        return !(touch.view!.isKind(of: UIControl.self))
     }
 }
 

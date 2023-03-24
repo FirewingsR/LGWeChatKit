@@ -25,12 +25,12 @@ class LGEmotionView: UIView , UIScrollViewDelegate{
         backgroundColor = UIColor(hexString: "F6F6F8")
         
         scrollView = UIScrollView(frame: CGRectMake(0, 0, bounds.width, bounds.height - 30))
-        scrollView.pagingEnabled = true
+        scrollView.isPagingEnabled = true
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.delegate = self
         pageCtrl = UIPageControl(frame: CGRectMake(0, scrollView.frame.height, bounds.width, 30))
-        pageCtrl.pageIndicatorTintColor = UIColor.groupTableViewBackgroundColor()
-        pageCtrl.currentPageIndicatorTintColor = UIColor.lightGrayColor()
+        pageCtrl.pageIndicatorTintColor = UIColor.groupTableViewBackground
+        pageCtrl.currentPageIndicatorTintColor = UIColor.lightGray
         
         addSubview(scrollView)
         addSubview(pageCtrl)
@@ -68,7 +68,7 @@ class LGEmotionView: UIView , UIScrollViewDelegate{
             delete = false
         }
         
-        delegate?.selectEmoji(emojiCode, description: emojiDescription, delete: delete)
+        delegate?.selectEmoji(code: emojiCode, description: emojiDescription, delete: delete)
     }
     
 
@@ -98,7 +98,7 @@ class LGEmojiView: UIView {
         self.init(frame: frame)
         parent = parentView
         buttonSelector = selector
-        setupEmotionWith(index)
+        setupEmotionWith(index: index)
     }
     
     
@@ -117,9 +117,9 @@ class LGEmojiView: UIView {
                 let emotionIndex = (index * 23) + i * numberPerLine + j + 1
                 
                 if emotionIndex <= emotionCount + 1 {
-                    let button = UIButton(type: .Custom)
+                    let button = UIButton(type: .custom)
                     addSubview(button)
-                    button.addTarget(parent, action: "emojiClick:", forControlEvents: .TouchUpInside)
+                    button.addTarget(parent, action: "emojiClick:", for: .touchUpInside)
                     button.frame = CGRectMake(CGFloat(j * buttonH) + CGFloat(horizontalEdge) + CGFloat(j) * horizontalMargin,
                         CGFloat(i * buttonH) + CGFloat(verticalEdge) + CGFloat(i) * CGFloat(verticalEdge),
                         CGFloat(buttonH),
@@ -127,10 +127,10 @@ class LGEmojiView: UIView {
                     
                     if i * numberPerLine + j + 1 == numberPerLine * line || emotionIndex == emotionCount + 1{
                         button.frame = CGRectMake(button.frame.x, button.frame.y, 30, 30)
-                        button.setBackgroundImage(UIImage(named: "DeleteEmoticonBtn"), forState: .Normal)
+                        button.setBackgroundImage(UIImage(named: "DeleteEmoticonBtn"), for: .normal)
                         button.tag = 0
                     } else {
-                        button.setBackgroundImage(UIImage(named: "Expression_" + "\(emotionIndex)"), forState: .Normal)
+                        button.setBackgroundImage(UIImage(named: "Expression_" + "\(emotionIndex)"), for: .normal)
                         button.tag = emotionIndex
                     }
                 }

@@ -19,20 +19,20 @@ class FriendViewModel {
     
     func searchContact() {
         let store = CNContactStore()
-        let keyToFetch = [CNContactFormatter.descriptorForRequiredKeysForStyle(.FullName), CNContactImageDataKey, CNContactPhoneNumbersKey]
+        let keyToFetch: [CNKeyDescriptor] = [CNContactFormatter.descriptorForRequiredKeys(for: .fullName), CNContactImageDataKey as CNKeyDescriptor, CNContactPhoneNumbersKey as CNKeyDescriptor]
         let fetchRequest = CNContactFetchRequest(keysToFetch: keyToFetch)
         
         var contacts = [CNContact]()
         
         do {
-            try store.enumerateContactsWithFetchRequest(fetchRequest, usingBlock: { (contact, stop) -> Void in
+            try store.enumerateContacts(with: fetchRequest, usingBlock: { (contact, stop) -> Void in
                 contacts.append(contact)
             })
         } catch let error as NSError {
             print(error.localizedDescription)
         }
         
-        update(contacts)
+        update(contacts: contacts)
     }
     
     let image = ["icon1", "icon2", "icon3", "icon4", "icon0"]
@@ -45,28 +45,28 @@ class FriendViewModel {
         for contact in contacts {
             
             name = "\(contact.familyName)\(contact.givenName)"
-            iconname = image[random() % 5]
+            iconname = image[Int(arc4random()) % 5]
             
             for number in contact.phoneNumbers {
                 let phoneNumber = number.value as! CNPhoneNumber
-                if phoneNumber.stringValue.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) > 0 {
+                if phoneNumber.stringValue.lengthOfBytes(using: String.Encoding.utf8) > 0 {
                     phonenumber = phoneNumber.stringValue
                     break
                 }
             }
             let friend = Friend(name: name, phone: phonenumber, iconName: iconname)
-            addToSession(friend)
+            addToSession(friend: friend)
         }
     }
     
     
     private func addToSession(friend: Friend) {
         var newSession = true
-        var englishName = change2English(friend.name)
-        if englishName.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) < 1 {
+        var englishName = change2English(chinese: friend.name)
+        if englishName.lengthOfBytes(using: String.Encoding.utf8) < 1 {
             englishName = "*"
         }
-        let firstChar = englishName.substringToIndex(englishName.startIndex.advancedBy(1))
+        let firstChar = englishName.substring(to:englishName.startIndex)
         
         for session in friendSession.value {
             if session.key.value == firstChar {

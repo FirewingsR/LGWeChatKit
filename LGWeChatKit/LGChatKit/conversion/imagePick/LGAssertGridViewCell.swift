@@ -17,27 +17,27 @@ class LGAssertGridViewCell: UICollectionViewCell {
     var selectIndicator: UIButton
     var assetModel: LGAssetModel! {
         didSet {
-            if assetModel.asset.mediaType == .Video {
-                self.playIndicator?.hidden = false
+            if assetModel.asset.mediaType == .video {
+                self.playIndicator?.isHidden = false
             } else {
-                self.playIndicator?.hidden = true
+                self.playIndicator?.isHidden = true
             }
         }
     }
     var buttonSelect: Bool {
         willSet {
             if newValue {
-                selectIndicator.selected = true
-                selectIndicator.setImage(UIImage(named: "CellBlueSelected"), forState: .Normal)
+                selectIndicator.isSelected = true
+                selectIndicator.setImage(UIImage(named: "CellBlueSelected"), for: .normal)
             } else {
-                selectIndicator.selected = false
-                selectIndicator.setImage(UIImage(named: "CellGreySelected"), forState: .Normal)
+                selectIndicator.isSelected = false
+                selectIndicator.setImage(UIImage(named: "CellGreySelected"), for: .normal)
             }
         }
     }
     
     override init(frame: CGRect) {
-        selectIndicator = UIButton(type: .Custom)
+        selectIndicator = UIButton(type: .custom)
         selectIndicator.tag = 1
 
         buttonSelect = false
@@ -50,19 +50,19 @@ class LGAssertGridViewCell: UICollectionViewCell {
         playIndicator?.center = contentView.center
         playIndicator?.image = UIImage(named: "mmplayer_idle")
         contentView.addSubview(playIndicator!)
-        playIndicator?.hidden = true
+        playIndicator?.isHidden = true
         
         selectIndicator.frame = CGRectMake(bounds.width - buttonWidth , 0, buttonWidth, buttonWidth)
         contentView.addSubview(selectIndicator)
-        selectIndicator.setImage(UIImage(named: "CellGreySelected"), forState: .Normal)
+        selectIndicator.setImage(UIImage(named: "CellGreySelected"), for: .normal)
         
-        backgroundColor = UIColor.whiteColor()
+        backgroundColor = UIColor.white
         
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: .Top, relatedBy: .Equal, toItem: contentView, attribute: .Top, multiplier: 1, constant: 0))
-        contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: .Left, relatedBy: .Equal, toItem: contentView, attribute: .Left, multiplier: 1, constant: 0))
-        contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: .Right, relatedBy: .Equal, toItem: contentView, attribute: .Right, multiplier: 1, constant: 0))
-        contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: .Bottom, relatedBy: .Equal, toItem: contentView, attribute: .Bottom, multiplier: 1, constant: 0))
+        contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: .top, relatedBy: .equal, toItem: contentView, attribute: .top, multiplier: 1, constant: 0))
+        contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: .left, relatedBy: .equal, toItem: contentView, attribute: .left, multiplier: 1, constant: 0))
+        contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: .right, relatedBy: .equal, toItem: contentView, attribute: .right, multiplier: 1, constant: 0))
+        contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: .bottom, relatedBy: .equal, toItem: contentView, attribute: .bottom, multiplier: 1, constant: 0))
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -91,7 +91,7 @@ class LGAssertGridViewCell: UICollectionViewCell {
             groupAnimation.animations = [animationZoomOut, animationZoomIn]
             buttonSelect = true
             assetModel.select = true
-            selectIndicator.layer.addAnimation(groupAnimation, forKey: "selectZoom")
+            selectIndicator.layer.add(groupAnimation, forKey: "selectZoom")
         } else {
             button.tag = 1
             buttonSelect = false

@@ -30,10 +30,10 @@ swift2.0仿微信界面，可滑动cell,自定义图片选择器,视频播放。
  ```swift
   var cell = tableView.dequeueReusableCellWithIdentifier("messageListCell") as? LGConversionListCell
         if cell == nil {
-            let leftButtons = [UIButton.createButton("取消关注", backGroundColor: UIColor.purpleColor())]
-            let rightButtons = [UIButton.createButton("标记已读", backGroundColor: UIColor.grayColor()),UIButton.createButton("删除", backGroundColor: UIColor.redColor())]
+            let leftButtons = [UIButton.createButton("取消关注", backGroundColor: UIColor.purple)]
+            let rightButtons = [UIButton.createButton("标记已读", backGroundColor: UIColor.gray),UIButton.createButton("删除", backGroundColor: UIColor.red)]
             
-            cell = LGConversionListCell(style: .Subtitle, reuseIdentifier: "messageListCell")
+            cell = LGConversionListCell(style: .subtitle, reuseIdentifier: "messageListCell")
             cell?.delegate = self
             cell?.viewModel = updateCell()
             
@@ -81,7 +81,7 @@ swift2.0仿微信界面，可滑动cell,自定义图片选择器,视频播放。
  ```
  获取每一张图片，options是可选属性，可以设置图片的质量等
  ```swift
- PHImageManager.defaultManager().requestImageForAsset(collection?.fetchResult.lastObject as! PHAsset, targetSize: CGSizeMake(50, 60), contentMode: .AspectFit, options: nil) { (image, _: [NSObject : AnyObject]?) -> Void in
+ PHImageManager.default().requestImageForAsset(collection?.fetchResult.lastObject as! PHAsset, targetSize: CGSizeMake(50, 60), contentMode: .aspectFit, options: nil) { (image, _: [AnyHashable : Any]?) -> Void in
             if image == nil {
                 return
             }

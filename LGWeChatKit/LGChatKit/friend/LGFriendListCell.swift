@@ -17,19 +17,19 @@ class LGFriendListCell: LGConversionListBaseCell {
     let messageListCellHeight = 44
     let imageHeight = 40
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         iconView = UIImageView(frame: CGRectMake(5, CGFloat(messageListCellHeight - imageHeight) / 2, CGFloat(imageHeight), CGFloat(imageHeight)))
         iconView.layer.cornerRadius = 5.0
         iconView.layer.masksToBounds = true
         
         userNameLabel = UILabel()
-        userNameLabel.textAlignment = .Left
-        userNameLabel.font = UIFont.systemFontOfSize(14.0)
+        userNameLabel.textAlignment = .left
+        userNameLabel.font = UIFont.systemFont(ofSize: 14.0)
         
         phoneLabel = UILabel()
-        phoneLabel.textAlignment = .Left
-        phoneLabel.font = UIFont.systemFontOfSize(13.0)
-        phoneLabel.textColor = UIColor.lightGrayColor()
+        phoneLabel.textAlignment = .left
+        phoneLabel.font = UIFont.systemFont(ofSize: 13.0)
+        phoneLabel.textColor = UIColor.lightGray
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -40,12 +40,12 @@ class LGFriendListCell: LGConversionListBaseCell {
         userNameLabel.translatesAutoresizingMaskIntoConstraints = false
         phoneLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        contentView.addConstraint(NSLayoutConstraint(item: userNameLabel, attribute: .Left, relatedBy: .Equal, toItem: contentView, attribute: .Left, multiplier: 1, constant: CGFloat(messageListCellHeight + 8)))
-        contentView.addConstraint(NSLayoutConstraint(item: userNameLabel, attribute: .Top, relatedBy: .Equal, toItem: contentView, attribute: .Top, multiplier: 1, constant: 5))
+        contentView.addConstraint(NSLayoutConstraint(item: userNameLabel, attribute: .left, relatedBy: .equal, toItem: contentView, attribute: .left, multiplier: 1, constant: CGFloat(messageListCellHeight + 8)))
+        contentView.addConstraint(NSLayoutConstraint(item: userNameLabel, attribute: .top, relatedBy: .equal, toItem: contentView, attribute: .top, multiplier: 1, constant: 5))
         
-        contentView.addConstraint(NSLayoutConstraint(item: phoneLabel, attribute: .Left, relatedBy: .Equal, toItem: userNameLabel, attribute: .Left, multiplier: 1, constant: 0))
-        contentView.addConstraint(NSLayoutConstraint(item: phoneLabel, attribute: .Top, relatedBy: .Equal, toItem: userNameLabel, attribute: .Bottom, multiplier: 1, constant: 5))
-        contentView.addConstraint(NSLayoutConstraint(item: phoneLabel, attribute: .Right, relatedBy: .Equal, toItem: contentView, attribute: .Right, multiplier: 1, constant: -70))
+        contentView.addConstraint(NSLayoutConstraint(item: phoneLabel, attribute: .left, relatedBy: .equal, toItem: userNameLabel, attribute: .left, multiplier: 1, constant: 0))
+        contentView.addConstraint(NSLayoutConstraint(item: phoneLabel, attribute: .top, relatedBy: .equal, toItem: userNameLabel, attribute: .bottom, multiplier: 1, constant: 5))
+        contentView.addConstraint(NSLayoutConstraint(item: phoneLabel, attribute: .right, relatedBy: .equal, toItem: contentView, attribute: .right, multiplier: 1, constant: -70))
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -22,24 +22,24 @@ class PHRootViewModel {
         let albumOptions = PHFetchOptions()
         albumOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
         
-        let userAlbum = PHAssetCollection.fetchAssetCollectionsWithType(.SmartAlbum, subtype: .AlbumRegular, options: nil)
+        let userAlbum = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
         
-        userAlbum.enumerateObjectsUsingBlock { (collection, index, stop) -> Void in
+        userAlbum.enumerateObjects { (collection, index, stop) -> Void in
             let coll = collection as! PHAssetCollection
-            let assert = PHAsset.fetchAssetsInAssetCollection(coll, options: nil)
+            let assert = PHAsset.fetchAssets(in: coll, options: nil)
             if assert.count > 0 {
-                let model = PHRootModel(title: coll.localizedTitle!, count: assert.count, fetchResult: assert)
+                let model = PHRootModel(title: coll.localizedTitle!, count: assert.count, fetchResult: assert as! PHFetchResult<AnyObject>)
                 self.collections.value.append(model)
             }
         }
         
-        let userCollection = PHCollectionList.fetchTopLevelUserCollectionsWithOptions(nil)
+        let userCollection = PHCollectionList.fetchTopLevelUserCollections(with: nil)
         
-        userCollection.enumerateObjectsUsingBlock { (list, index, stop) -> Void in
+        userCollection.enumerateObjects { (list, index, stop) -> Void in
             let list = list as! PHAssetCollection
-            let assert = PHAsset.fetchAssetsInAssetCollection(list, options: nil)
+            let assert = PHAsset.fetchAssets(in: list, options: nil)
             if assert.count > 0 {
-                let model = PHRootModel(title: list.localizedTitle!, count: assert.count, fetchResult: assert)
+                let model = PHRootModel(title: list.localizedTitle!, count: assert.count, fetchResult: assert as! PHFetchResult<AnyObject>)
                 self.collections.value.append(model)
             }
         }

@@ -27,11 +27,11 @@ class Message {
         }
     }
     let dataString: String = {
-        let calendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)
+        let calendar = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
         let date = NSDate()
-        let formater = NSDateFormatter()
+        let formater = DateFormatter()
         formater.dateFormat = "MM-dd HH:mm"
-        var dateStr: String = formater.stringFromDate(date)
+        var dateStr: String = formater.string(from: date as Date)
         return dateStr
     }()
     

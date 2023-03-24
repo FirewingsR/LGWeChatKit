@@ -16,22 +16,22 @@ class LGConversationListController: UITableViewController, LGConversionListBaseC
         self.title = "消息"
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 20
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("messageListCell") as? LGConversionListCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell = tableView.dequeueReusableCell(withIdentifier: "messageListCell") as? LGConversionListCell
         if cell == nil {
-            let leftButtons = [UIButton.createButton("取消关注", backGroundColor: UIColor.purpleColor())]
-            let rightButtons = [UIButton.createButton("标记已读", backGroundColor: UIColor.grayColor()),UIButton.createButton("删除", backGroundColor: UIColor.redColor())]
+            let leftButtons = [UIButton.createButton(title: "取消关注", backGroundColor: UIColor.purple)]
+            let rightButtons = [UIButton.createButton(title: "标记已读", backGroundColor: UIColor.gray), UIButton.createButton(title: "删除", backGroundColor: UIColor.red)]
             
-            cell = LGConversionListCell(style: .Subtitle, reuseIdentifier: "messageListCell")
+            cell = LGConversionListCell(style: .subtitle, reuseIdentifier: "messageListCell")
             cell?.delegate = self
             cell?.viewModel = updateCell()
             
-            cell?.setLeftButtons(leftButtons)
-            cell?.setRightButtons(rightButtons)
+            cell?.setLeftButtons(buttons: leftButtons)
+            cell?.setRightButtons(buttons: rightButtons)
         }
         
         return cell!
@@ -48,26 +48,26 @@ class LGConversationListController: UITableViewController, LGConversionListBaseC
         
         let viewModel = LGConversionListCellModel()
         
-        viewModel.iconName.value = image[random() % 5]
-        viewModel.userName.value = name[random() % 5]
-        viewModel.timer.value = time[random() % 5]
-        viewModel.lastMessage.value = message[random() % 5]
+        viewModel.iconName.value = image[Int(arc4random()) % 5]
+        viewModel.userName.value = name[Int(arc4random()) % 5]
+        viewModel.timer.value = time[Int(arc4random()) % 5]
+        viewModel.lastMessage.value = message[Int(arc4random()) % 5]
         
         return viewModel
     }
 
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
         navigationController?.pushViewController(LGConversationViewController(), animated: true)
     }
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60.0
     }
     
     
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
     
@@ -75,15 +75,15 @@ class LGConversationListController: UITableViewController, LGConversionListBaseC
     // MARK: - cell delegate
     
     func didSelectedLeftButton(index: Int) {
-        let actionSheet = UIAlertController(title: "取消关注", message: "确定要取消关注?", preferredStyle: .ActionSheet)
-        actionSheet.addAction(UIAlertAction(title: "取消", style: .Cancel, handler: { (alertAction) -> Void in
+        let actionSheet = UIAlertController(title: "取消关注", message: "确定要取消关注?", preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "取消", style: .cancel, handler: { (alertAction) -> Void in
             
         }))
-        actionSheet.addAction(UIAlertAction(title: "确定", style: .Default, handler: { (alertAction) -> Void in
+        actionSheet.addAction(UIAlertAction(title: "确定", style: .default, handler: { (alertAction) -> Void in
             
         }))
         
-        self.presentViewController(actionSheet, animated: true, completion: nil)
+        self.present(actionSheet, animated: true, completion: nil)
     }
     
     func didSelectedRightButton(index: Int) {

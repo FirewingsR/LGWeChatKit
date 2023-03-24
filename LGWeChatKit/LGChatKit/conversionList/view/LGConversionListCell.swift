@@ -43,24 +43,24 @@ class LGConversionListCell: LGConversionListBaseCell {
     }
     
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         iconView = UIImageView(frame: CGRectMake(5, CGFloat(messageListCellHeight - 50) / 2, 50, 50))
         iconView.layer.cornerRadius = 5.0
         iconView.layer.masksToBounds = true
         
         userNameLabel = UILabel()
-        userNameLabel.textAlignment = .Left
-        userNameLabel.font = UIFont.systemFontOfSize(14.0)
+        userNameLabel.textAlignment = .left
+        userNameLabel.font = UIFont.systemFont(ofSize: 14.0)
         
         messageLabel = UILabel()
-        messageLabel.textAlignment = .Left
-        messageLabel.font = UIFont.systemFontOfSize(13.0)
-        messageLabel.textColor = UIColor.lightGrayColor()
+        messageLabel.textAlignment = .left
+        messageLabel.font = UIFont.systemFont(ofSize: 13.0)
+        messageLabel.textColor = UIColor.lightGray
         
         timerLabel = UILabel()
-        timerLabel.textAlignment = .Right
-        timerLabel.font = UIFont.systemFontOfSize(14.0)
-        timerLabel.textColor = UIColor.lightGrayColor()
+        timerLabel.textAlignment = .right
+        timerLabel.font = UIFont.systemFont(ofSize: 14.0)
+        timerLabel.textColor = UIColor.lightGray
         
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -73,16 +73,16 @@ class LGConversionListCell: LGConversionListBaseCell {
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         timerLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        contentView.addConstraint(NSLayoutConstraint(item: userNameLabel, attribute: .Left, relatedBy: .Equal, toItem: contentView, attribute: .Left, multiplier: 1, constant: CGFloat(messageListCellHeight + 8)))
-        contentView.addConstraint(NSLayoutConstraint(item: userNameLabel, attribute: .Top, relatedBy: .Equal, toItem: contentView, attribute: .Top, multiplier: 1, constant: 5))
+        contentView.addConstraint(NSLayoutConstraint(item: userNameLabel, attribute: .left, relatedBy: .equal, toItem: contentView, attribute: .left, multiplier: 1, constant: CGFloat(messageListCellHeight + 8)))
+        contentView.addConstraint(NSLayoutConstraint(item: userNameLabel, attribute: .top, relatedBy: .equal, toItem: contentView, attribute: .top, multiplier: 1, constant: 5))
         
-        contentView.addConstraint(NSLayoutConstraint(item: messageLabel, attribute: .Left, relatedBy: .Equal, toItem: userNameLabel, attribute: .Left, multiplier: 1, constant: 0))
-        contentView.addConstraint(NSLayoutConstraint(item: messageLabel, attribute: .Top, relatedBy: .Equal, toItem: userNameLabel, attribute: .Bottom, multiplier: 1, constant: 10))
-        contentView.addConstraint(NSLayoutConstraint(item: messageLabel, attribute: .Right, relatedBy: .Equal, toItem: contentView, attribute: .Right, multiplier: 1, constant: -70))
+        contentView.addConstraint(NSLayoutConstraint(item: messageLabel, attribute: .left, relatedBy: .equal, toItem: userNameLabel, attribute: .left, multiplier: 1, constant: 0))
+        contentView.addConstraint(NSLayoutConstraint(item: messageLabel, attribute: .top, relatedBy: .equal, toItem: userNameLabel, attribute: .bottom, multiplier: 1, constant: 10))
+        contentView.addConstraint(NSLayoutConstraint(item: messageLabel, attribute: .right, relatedBy: .equal, toItem: contentView, attribute: .right, multiplier: 1, constant: -70))
         
-        contentView.addConstraint(NSLayoutConstraint(item: timerLabel, attribute: .Left, relatedBy: .Equal, toItem: contentView, attribute: .Right, multiplier: 1, constant: -65))
-        contentView.addConstraint(NSLayoutConstraint(item: timerLabel, attribute: .Top, relatedBy: .Equal, toItem: userNameLabel, attribute: .Top, multiplier: 1, constant: 0))
-        contentView.addConstraint(NSLayoutConstraint(item: timerLabel, attribute: .Right, relatedBy: .Equal, toItem: contentView, attribute: .Right, multiplier: 1, constant: -5))
+        contentView.addConstraint(NSLayoutConstraint(item: timerLabel, attribute: .left, relatedBy: .equal, toItem: contentView, attribute: .right, multiplier: 1, constant: -65))
+        contentView.addConstraint(NSLayoutConstraint(item: timerLabel, attribute: .top, relatedBy: .equal, toItem: userNameLabel, attribute: .top, multiplier: 1, constant: 0))
+        contentView.addConstraint(NSLayoutConstraint(item: timerLabel, attribute: .right, relatedBy: .equal, toItem: contentView, attribute: .right, multiplier: 1, constant: -5))
         
     }
 

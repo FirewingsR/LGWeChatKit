@@ -21,14 +21,14 @@ class LGFindViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "发现"
-        view.backgroundColor = UIColor.groupTableViewBackgroundColor()
+        view.backgroundColor = UIColor.groupTableViewBackground
         // Do any additional setup after loading the view.
         
         let activityType = String(format: "%@.%@", uniqueIdentifier, domainIdentifier)
         activity = NSUserActivity(activityType: activityType)
         activity.title = "jamy-search"
         activity.keywords = Set<String>(arrayLiteral: "微信", "jamy", "MJ")
-        activity.eligibleForSearch = true
+        activity.isEligibleForSearch = true
         activity.becomeCurrent()
         
         // core spotlight
@@ -37,12 +37,12 @@ class LGFindViewController: UITableViewController {
         attributeSet.contentDescription = "jamy写的仿微信界面，谢谢大家支持"
         attributeSet.keywords = ["微信", "jamy", "MJ"]
         let image = UIImage(named: "icon")
-        let data = UIImagePNGRepresentation(image!)
+        let data = image!.pngData()
         attributeSet.thumbnailData = data
         
         let searchItem = CSSearchableItem(uniqueIdentifier: uniqueIdentifier, domainIdentifier: domainIdentifier, attributeSet: attributeSet)
         
-        CSSearchableIndex.defaultSearchableIndex().indexSearchableItems([searchItem]) { (error) -> Void in
+        CSSearchableIndex.default().indexSearchableItems([searchItem]) { (error) -> Void in
             if error != nil {
                 NSLog("search fail")
             } else {
@@ -56,8 +56,8 @@ class LGFindViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
         if indexPath.section == 1 && indexPath.row == 0 {
             if TARGET_OS_SIMULATOR == 1 {
                 showAlterView()
@@ -69,11 +69,11 @@ class LGFindViewController: UITableViewController {
     }
     
     func showAlterView() {
-        let alter = UIAlertController(title: "Tip", message: "Simulator can't use this function!", preferredStyle: .Alert)
-        alter.addAction(UIAlertAction(title: "取消", style: UIAlertActionStyle.Cancel, handler: { (action) -> Void in
-            self.dismissViewControllerAnimated(true, completion: nil)
+        let alter = UIAlertController(title: "Tip", message: "Simulator can't use this function!", preferredStyle: .alert)
+        alter.addAction(UIAlertAction(title: "取消", style: UIAlertAction.Style.cancel, handler: { (action) -> Void in
+            self.dismiss(animated: true, completion: nil)
         }))
         
-        presentViewController(alter, animated: true, completion: nil)
+        present(alter, animated: true, completion: nil)
     }
 }

@@ -16,10 +16,10 @@ class LGFriendViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "通讯录"
-        view.backgroundColor = UIColor.groupTableViewBackgroundColor()
+        view.backgroundColor = UIColor.groupTableViewBackground
         // Do any additional setup after loading the view.
         
-        tableView = UITableView(frame: view.bounds, style: .Grouped)
+        tableView = UITableView(frame: view.bounds, style: .grouped)
         tableView.delegate = self
         tableView.dataSource = self
         view.addSubview(tableView)
@@ -30,8 +30,7 @@ class LGFriendViewController: UIViewController {
 
     var viewModel: FriendViewModel? {
         didSet {
-            viewModel?.friendSession.observe({ (sessionModel:[contactSessionModel]) -> Void in
-                
+            viewModel?.friendSession.observe(observer: { (sessionModel:[contactSessionModel]) -> Void in
             })
         }
     }
@@ -44,18 +43,18 @@ extension LGFriendViewController: UITableViewDelegate, UITableViewDataSource {
         return (viewModel?.friendSession.value.count)!
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let cellModel = viewModel?.friendSession.value[section]
         return (cellModel?.friends.value.count)!
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellIdentifier = "friendcell"
-        var cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) as? LGFriendListCell
+        var cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) as? LGFriendListCell
         if cell == nil {
-            cell = LGFriendListCell(style: .Default, reuseIdentifier: cellIdentifier)
-            let leftButtons = [UIButton.createButton("修改备注", backGroundColor: UIColor.grayColor())]
-            cell?.setRightButtons(leftButtons)
+            cell = LGFriendListCell(style: .default, reuseIdentifier: cellIdentifier)
+            let leftButtons = [UIButton.createButton(title: "修改备注", backGroundColor: UIColor.gray)]
+            cell?.setRightButtons(buttons: leftButtons)
         }
         let cellModel =  viewModel?.friendSession.value[indexPath.section]
         let friend = cellModel?.friends.value[indexPath.row]
@@ -65,8 +64,8 @@ extension LGFriendViewController: UITableViewDelegate, UITableViewDataSource {
         return cell!
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+    func tableView(tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
     }
     
     func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -74,7 +73,7 @@ extension LGFriendViewController: UITableViewDelegate, UITableViewDataSource {
         return cellModel?.key.value
     }
     
-    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    func tableView(tableView: UITableView, canEditRowAtindexPath indexPath: IndexPath) -> Bool {
         return true
     }
     

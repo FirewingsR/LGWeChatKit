@@ -13,9 +13,9 @@ import ObjectiveC
 
 private var selectedIndexPathKey: UInt8 = 101
 extension UICollectionViewController {
-    var selectedIndexPath: NSIndexPath?{
+    var selectedIndexPath: IndexPath? {
         get {
-            return objc_getAssociatedObject(self, &selectedIndexPathKey) as? NSIndexPath
+            return objc_getAssociatedObject(self, &selectedIndexPathKey) as? IndexPath
         }
         
         set {

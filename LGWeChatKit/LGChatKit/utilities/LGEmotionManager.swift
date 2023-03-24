@@ -22,14 +22,14 @@ class LGEmotionManager: NSObject {
     
     override init() {
         super.init()
-        if let fileName = NSBundle.mainBundle().pathForResource("emoji_config", ofType: "json") {
-            emotionArray = try! NSJSONSerialization.JSONObjectWithData(NSData(contentsOfFile: fileName)!, options: NSJSONReadingOptions.AllowFragments) as! NSArray
+        if let fileName = Bundle.main.path(forResource: "emoji_config", ofType: "json") {
+            emotionArray = try! JSONSerialization.jsonObject(with: NSData(contentsOfFile: fileName)! as Data, options: JSONSerialization.ReadingOptions.allowFragments) as! NSArray
             
             if emotionArray.count > 0 {
-                emotionArray.enumerateObjectsUsingBlock({ (objc: AnyObject, index: Int, stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                emotionArray.enumerateObjects { objc, index, stop in
                     let emotionData = objc as! NSArray
                     self.emotionDict = [(emotionData[1] as! String): [emotionData[0], emotionData[2]]]
-                })
+                }
             }
         }
     }

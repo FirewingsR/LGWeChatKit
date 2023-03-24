@@ -18,21 +18,21 @@ class LGAudioPlayer: NSObject, AVAudioPlayerDelegate {
     }
     
     func startPlaying(message: voiceMessage) {
-        if (audioPlayer != nil && audioPlayer.playing) {
+        if (audioPlayer != nil && audioPlayer.isPlaying) {
             stopPlaying()
         }
      
-        let voiceData = NSData(contentsOfURL: message.voicePath)
+        let voiceData = NSData(contentsOf: message.voicePath as URL)
     
         do {
-            try audioPlayer = AVAudioPlayer(data: voiceData!)
+            try audioPlayer = AVAudioPlayer(data: voiceData! as Data)
         } catch{
             return
         }
         audioPlayer.delegate = self
         
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
         } catch {
             // no-op
         }

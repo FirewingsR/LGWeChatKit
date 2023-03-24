@@ -14,20 +14,20 @@ protocol LGAudioRecorderDelegate {
 }
 
 
-let soundPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true).first!
+let soundPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
 
-let audioSettings: [String: AnyObject] = [AVLinearPCMIsFloatKey: NSNumber(bool: false),
-    AVLinearPCMIsBigEndianKey: NSNumber(bool: false),
-    AVLinearPCMBitDepthKey: NSNumber(int: 16),
-    AVFormatIDKey: NSNumber(unsignedInt: kAudioFormatLinearPCM),
-    AVNumberOfChannelsKey: NSNumber(int: 1), AVSampleRateKey: NSNumber(int: 16000),
-    AVEncoderAudioQualityKey: NSNumber(integer: AVAudioQuality.Medium.rawValue)]
+let audioSettings: [String: AnyObject] = [AVLinearPCMIsFloatKey: NSNumber(value: false),
+                                      AVLinearPCMIsBigEndianKey: NSNumber(value: false),
+                                         AVLinearPCMBitDepthKey: NSNumber(value: 16),
+                                                  AVFormatIDKey: NSNumber(value: kAudioFormatLinearPCM),
+                                          AVNumberOfChannelsKey: NSNumber(value: 1), AVSampleRateKey: NSNumber(value: 16000),
+                                       AVEncoderAudioQualityKey: NSNumber(value: AVAudioQuality.medium.rawValue)]
 
 
 class LGAudioRecorder: NSObject, AVAudioRecorderDelegate {
     
     var audioData: NSData!
-    var operationQueue: NSOperationQueue!
+    var operationQueue: OperationQueue!
     var recorder: AVAudioRecorder!
     
     var startTime: Double!
@@ -39,29 +39,29 @@ class LGAudioRecorder: NSObject, AVAudioRecorderDelegate {
     convenience init(fileName: String) {
         self.init()
         
-        let filePath = NSURL(fileURLWithPath: (soundPath as NSString).stringByAppendingPathComponent(fileName))
+        let filePath = NSURL(fileURLWithPath: (soundPath as NSString).appendingPathComponent(fileName))
         
-        recorder = try! AVAudioRecorder(URL: filePath, settings: audioSettings)
+        recorder = try! AVAudioRecorder(url: filePath as URL, settings: audioSettings)
         recorder.delegate = self
-        recorder.meteringEnabled = true
+        recorder.isMeteringEnabled = true
         
     }
     
     override init() {
-        operationQueue = NSOperationQueue()
+        operationQueue = OperationQueue()
         super.init()
     }
     
     func startRecord() {
         startTime = NSDate().timeIntervalSince1970
-        performSelector("readyStartRecord", withObject: self, afterDelay: 0.5)
+        perform("readyStartRecord", with: self, afterDelay: 0.5)
     }
     
     func readyStartRecord() {
         let audioSession = AVAudioSession.sharedInstance()
         
         do {
-            try audioSession.setCategory(AVAudioSessionCategoryRecord)
+            try audioSession.setCategory(AVAudioSession.Category.record)
         } catch {
             NSLog("setCategory fail")
             return
@@ -74,7 +74,7 @@ class LGAudioRecorder: NSObject, AVAudioRecorderDelegate {
             return
         }
         recorder.record()
-        let operation = NSBlockOperation()
+        let operation = BlockOperation()
         operation.addExecutionBlock(updateMeters)
         operationQueue.addOperation(operation)
     }
@@ -84,11 +84,11 @@ class LGAudioRecorder: NSObject, AVAudioRecorderDelegate {
         endTimer = NSDate().timeIntervalSince1970
         timeInterval = nil
         if (endTimer - startTime) < 0.5 {
-            NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: "readyStartRecord", object: self)
+            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: "readyStartRecord", object: self)
         } else {
-            timeInterval = NSNumber(int: NSNumber(double: recorder.currentTime).intValue)
+            timeInterval = NSNumber(value: Int32(NSNumber(value: recorder.currentTime).intValue))
             if timeInterval.intValue < 1 {
-                performSelector("readyStopRecord", withObject: self, afterDelay: 0.4)
+                perform("readyStopRecord", with: self, afterDelay: 0.4)
             } else {
                 readyStopRecord()
             }
@@ -101,23 +101,23 @@ class LGAudioRecorder: NSObject, AVAudioRecorderDelegate {
         recorder.stop()
         let audioSession = AVAudioSession.sharedInstance()
         do {
-            try audioSession.setActive(false, withOptions: .NotifyOthersOnDeactivation)
+            try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
         } catch {
             // no-op
         }
-        audioData = NSData(contentsOfURL: recorder.url)
+        audioData = NSData(contentsOf: recorder.url)
     }
     
     func updateMeters() {
         repeat {
             recorder.updateMeters()
-            timeInterval = NSNumber(float: NSNumber(double: recorder.currentTime).floatValue)
-            let averagePower = recorder.averagePowerForChannel(0)
+            timeInterval = NSNumber(value: NSNumber(value: recorder.currentTime).floatValue)
+            let averagePower = recorder.averagePower(forChannel: 0)
            // let pearPower = recorder.peakPowerForChannel(0)
           //  NSLog("%@   %f  %f", timeInterval, averagePower, pearPower)
-            delegate?.audioRecorderUpdateMetra(averagePower)
-            NSThread.sleepForTimeInterval(0.2)
-        } while(recorder.recording)
+            delegate?.audioRecorderUpdateMetra(metra: averagePower)
+            Thread.sleep(forTimeInterval: 0.2)
+        } while(recorder.isRecording)
     }
     
     // MARK: audio delegate

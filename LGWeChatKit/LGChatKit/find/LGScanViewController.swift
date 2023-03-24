@@ -12,13 +12,13 @@ import AVFoundation
 
 class LGScanViewController: UIViewController , AVCaptureMetadataOutputObjectsDelegate{
 
-    let screenWidth = UIScreen.mainScreen().bounds.size.width
-    let screenHeight = UIScreen.mainScreen().bounds.size.height
-    let screenSize = UIScreen.mainScreen().bounds.size
+    let screenWidth = UIScreen.main.bounds.size.width
+    let screenHeight = UIScreen.main.bounds.size.height
+    let screenSize = UIScreen.main.bounds.size
     
     var traceNumber = 0
     var upORdown = false
-    var timer:NSTimer!
+    var timer: Timer!
     
     var device : AVCaptureDevice!
     var input  : AVCaptureDeviceInput!
@@ -55,14 +55,14 @@ class LGScanViewController: UIViewController , AVCaptureMetadataOutputObjectsDel
         super.didReceiveMemoryWarning()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         session.startRunning()
-        timer = NSTimer(timeInterval: 0.02, target: self, selector: "scanLineAnimation", userInfo: nil, repeats: true)
-        NSRunLoop.mainRunLoop().addTimer(timer, forMode: NSDefaultRunLoopMode)
+        timer = Timer(timeInterval: 0.02, target: self, selector: "scanLineAnimation", userInfo: nil, repeats: true)
+        RunLoop.main.add(timer, forMode: RunLoop.Mode.default)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         traceNumber = 0
         upORdown = false
         session.stopRunning()
@@ -73,7 +73,7 @@ class LGScanViewController: UIViewController , AVCaptureMetadataOutputObjectsDel
     }
     
     func setupCamera() -> Bool {
-        device = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        device = AVCaptureDevice.default(for: AVMediaType.video)
         do {
           input = try AVCaptureDeviceInput(device: device)
         }
@@ -83,11 +83,11 @@ class LGScanViewController: UIViewController , AVCaptureMetadataOutputObjectsDel
         }
         
         output = AVCaptureMetadataOutput()
-        output.setMetadataObjectsDelegate(self, queue: dispatch_get_main_queue())
+        output.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
         output.rectOfInterest = makeScanReaderInterestRect()
         
         session = AVCaptureSession()
-        session.sessionPreset = AVCaptureSessionPresetHigh
+        session.sessionPreset = AVCaptureSession.Preset.high
         if session.canAddInput(input)
         {
             session.addInput(input)
@@ -97,14 +97,14 @@ class LGScanViewController: UIViewController , AVCaptureMetadataOutputObjectsDel
             session.addOutput(output)
         }
         
-        output.metadataObjectTypes = [AVMetadataObjectTypeQRCode, AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeEAN8Code, AVMetadataObjectTypeCode128Code]
+        output.metadataObjectTypes = [AVMetadataObject.ObjectType.qr, AVMetadataObject.ObjectType.ean13, AVMetadataObject.ObjectType.ean8, AVMetadataObject.ObjectType.code128]
         
         preView = AVCaptureVideoPreviewLayer(session: session)
-        preView.videoGravity = AVLayerVideoGravityResizeAspectFill
+        preView.videoGravity = AVLayerVideoGravity.resizeAspectFill
         preView.frame = self.view.bounds
         
-        let shadowView = makeScanCameraShadowView(makeScanReaderRect())
-        self.view.layer.insertSublayer(preView, atIndex: 0)
+        let shadowView = makeScanCameraShadowView(innerRect: makeScanReaderRect())
+        self.view.layer.insertSublayer(preView, at: 0)
         self.view.addSubview(shadowView)
         
         return true
@@ -168,11 +168,11 @@ class LGScanViewController: UIViewController , AVCaptureMetadataOutputObjectsDel
         
         UIGraphicsBeginImageContext(referenceImage.frame.size)
         let context = UIGraphicsGetCurrentContext()
-        CGContextSetRGBFillColor(context, 0, 0, 0, 0.5)
+        context?.setFillColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         var drawRect = CGRectMake(0, 0, screenWidth, screenHeight)
-        CGContextFillRect(context, drawRect)
+        context?.fill(drawRect)
         drawRect = CGRectMake(innerRect.origin.x - referenceImage.frame.origin.x, innerRect.origin.y - referenceImage.frame.origin.y, innerRect.size.width, innerRect.size.height)
-        CGContextClearRect(context, drawRect)
+        context?.clear(drawRect)
         
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -192,7 +192,7 @@ class LGScanViewController: UIViewController , AVCaptureMetadataOutputObjectsDel
         let downHeight = rect.size.height
         
         if upORdown == false {
-            traceNumber++
+            traceNumber += 1
             line.frame = CGRectMake(lineFrameX, lineFrameY + CGFloat(2 * traceNumber), downHeight, 2)
             if CGFloat(2 * traceNumber) > downHeight - 2 {
                 upORdown = true
@@ -200,7 +200,7 @@ class LGScanViewController: UIViewController , AVCaptureMetadataOutputObjectsDel
         }
         else
         {
-            traceNumber--
+            traceNumber -= 1
             line.frame = CGRectMake(lineFrameX, lineFrameY + CGFloat(2 * traceNumber), downHeight, 2)
             if traceNumber == 0 {
                 upORdown = false
@@ -216,9 +216,9 @@ class LGScanViewController: UIViewController , AVCaptureMetadataOutputObjectsDel
         }
         
         let metadata = metadataObjects[0] as! AVMetadataMachineReadableCodeObject
-        let value = metadata.stringValue
-        
-        showScanCode(value)
+        guard let value = metadata.stringValue else { return }
+    
+        showScanCode(code: value)
     }
     
     // MARK: show result

@@ -10,24 +10,24 @@ import UIKit
 
 class LGPresentAnimationController: NSObject , UIViewControllerAnimatedTransitioning{
 
-    func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.2
     }
     
-    func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-        let fromCtrl = (transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey) as! UINavigationController).topViewController as! UICollectionViewController
-        let toCtrl = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)
-        let fromView = transitionContext.viewForKey(UITransitionContextFromViewKey)
-        let toView = transitionContext.viewForKey(UITransitionContextToViewKey)
-        let containertView = transitionContext.containerView()
-        let finalFrame = transitionContext.finalFrameForViewController(toCtrl!)
-        let layoutAttribute = fromCtrl.collectionView?.layoutAttributesForItemAtIndexPath((fromCtrl.selectedIndexPath)!)
-        let selectRect = fromCtrl.collectionView?.convertRect((layoutAttribute?.frame)!, toView: fromCtrl.collectionView?.superview)
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        let fromCtrl = (transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from) as! UINavigationController).topViewController as! UICollectionViewController
+        let toCtrl = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)
+        let fromView = transitionContext.view(forKey: UITransitionContextViewKey.from)
+        let toView = transitionContext.view(forKey: UITransitionContextViewKey.to)
+        let containertView = transitionContext.containerView
+        let finalFrame = transitionContext.finalFrame(for: toCtrl!)
+        let layoutAttribute = fromCtrl.collectionView?.layoutAttributesForItem(at: (fromCtrl.selectedIndexPath)!)
+        let selectRect = fromCtrl.collectionView?.convert((layoutAttribute?.frame)!, to: fromCtrl.collectionView?.superview)
 
         toView?.frame = selectRect!
-        containertView?.addSubview(toView!)
+        containertView.addSubview(toView!)
         
-        UIView.animateWithDuration(transitionDuration(transitionContext), delay: 0.0, usingSpringWithDamping: 1.5, initialSpringVelocity: 0.0, options: .CurveLinear, animations: { () -> Void in
+        UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0.0, usingSpringWithDamping: 1.5, initialSpringVelocity: 0.0, options: .curveLinear, animations: { () -> Void in
             fromView?.alpha = 0.5
             toView?.frame = finalFrame
             }) { (finish) -> Void in

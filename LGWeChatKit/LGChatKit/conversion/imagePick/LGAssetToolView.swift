@@ -20,11 +20,11 @@ class LGAssetToolView: UIView {
     var selectCount = Int() {
         willSet {
             if newValue > 0 {
-                totalButton.addAnimation(durationTime)
-                totalButton.hidden = false
-                totalButton.setTitle("\(newValue)", forState: .Normal)
+                totalButton.addAnimation(durationTime: durationTime)
+                totalButton.isHidden = false
+                totalButton.setTitle("\(newValue)", for: .normal)
             } else {
-                totalButton.hidden = true
+                totalButton.isHidden = true
             }
         }
     }
@@ -39,26 +39,26 @@ class LGAssetToolView: UIView {
         self.init()
         self.parent = parent
         
-        preViewButton = UIButton(type: .Custom)
-        preViewButton.titleLabel?.font = UIFont.systemFontOfSize(14.0)
-        preViewButton.setTitle(leftTitle, forState: .Normal)
-        preViewButton.setTitleColor(UIColor.blackColor(), forState: .Normal)
-        preViewButton.addTarget(parent, action: leftSelector, forControlEvents: .TouchUpInside)
+        preViewButton = UIButton(type: .custom)
+        preViewButton.titleLabel?.font = UIFont.systemFont(ofSize: 14.0)
+        preViewButton.setTitle(leftTitle, for: .normal)
+        preViewButton.setTitleColor(UIColor.black, for: .normal)
+        preViewButton.addTarget(parent, action: leftSelector, for: .touchUpInside)
         
-        totalButton = UIButton(type: .Custom)
-        totalButton.titleLabel?.font = UIFont.systemFontOfSize(14.0)
-        totalButton.setBackgroundImage(UIImage.imageWithColor(UIColor.greenColor()), forState: .Normal)
+        totalButton = UIButton(type: .custom)
+        totalButton.titleLabel?.font = UIFont.systemFont(ofSize: 14.0)
+        totalButton.setBackgroundImage(UIImage.imageWithColor(color: UIColor.green), for: .normal)
         totalButton.layer.cornerRadius = CGFloat(buttonWidth / 2)
         totalButton.layer.masksToBounds = true
-        totalButton.hidden = true
+        totalButton.isHidden = true
         
-        sendButton = UIButton(type: .Custom)
-        sendButton.titleLabel?.font = UIFont.systemFontOfSize(14.0)
-        sendButton.setTitle("发送", forState: .Normal)
-        sendButton.setTitleColor(UIColor.grayColor(), forState: .Normal)
-        sendButton.addTarget(parent, action: rightSelector, forControlEvents: .TouchUpInside)
+        sendButton = UIButton(type: .custom)
+        sendButton.titleLabel?.font = UIFont.systemFont(ofSize: 14.0)
+        sendButton.setTitle("发送", for: .normal)
+        sendButton.setTitleColor(UIColor.gray, for: .normal)
+        sendButton.addTarget(parent, action: rightSelector, for: .touchUpInside)
         
-        backgroundColor = UIColor.groupTableViewBackgroundColor()
+        backgroundColor = UIColor.groupTableViewBackground
         
         addSubview(preViewButton)
         addSubview(totalButton)
@@ -68,16 +68,16 @@ class LGAssetToolView: UIView {
         totalButton.translatesAutoresizingMaskIntoConstraints = false
         sendButton.translatesAutoresizingMaskIntoConstraints = false
         
-        addConstraint(NSLayoutConstraint(item: preViewButton, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 1, constant: 5))
-        addConstraint(NSLayoutConstraint(item: preViewButton, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: preViewButton, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1, constant: 5))
+        addConstraint(NSLayoutConstraint(item: preViewButton, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
         
-        addConstraint(NSLayoutConstraint(item: sendButton, attribute: .Right, relatedBy: .Equal, toItem: self, attribute: .Right, multiplier: 1, constant: -5))
-        addConstraint(NSLayoutConstraint(item: sendButton, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: sendButton, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: -5))
+        addConstraint(NSLayoutConstraint(item: sendButton, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
         
-        addConstraint(NSLayoutConstraint(item: totalButton, attribute: .Right, relatedBy: .Equal, toItem: sendButton, attribute: .Left, multiplier: 1, constant: -5))
-        addConstraint(NSLayoutConstraint(item: totalButton, attribute: .CenterY, relatedBy: .Equal, toItem: self, attribute: .CenterY, multiplier: 1, constant: 0))
-        totalButton.addConstraint(NSLayoutConstraint(item: totalButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .Width, multiplier: 1, constant: CGFloat(buttonWidth)))
-        totalButton.addConstraint(NSLayoutConstraint(item: totalButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .Height, multiplier: 1, constant: CGFloat(buttonWidth)))
+        addConstraint(NSLayoutConstraint(item: totalButton, attribute: .right, relatedBy: .equal, toItem: sendButton, attribute: .left, multiplier: 1, constant: -5))
+        addConstraint(NSLayoutConstraint(item: totalButton, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
+        totalButton.addConstraint(NSLayoutConstraint(item: totalButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: CGFloat(buttonWidth)))
+        totalButton.addConstraint(NSLayoutConstraint(item: totalButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: CGFloat(buttonWidth)))
     }
     
     override init(frame: CGRect) {

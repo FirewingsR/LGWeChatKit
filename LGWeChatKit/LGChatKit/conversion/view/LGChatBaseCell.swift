@@ -11,9 +11,9 @@ import UIKit
 let receiveTag = 0, sendTag = 1
 let iconImageTag = 10010, backgroundImageTag = 10020, indicatorTag = 10030
 
-let timeFont = UIFont.systemFontOfSize(12.0)
-let messageFont = UIFont.systemFontOfSize(14.0)
-let indicatorFont = UIFont.systemFontOfSize(10.0)
+let timeFont = UIFont.systemFont(ofSize: 12.0)
+let messageFont = UIFont.systemFont(ofSize: 14.0)
+let indicatorFont = UIFont.systemFont(ofSize: 10.0)
 
 class LGChatBaseCell: UITableViewCell {
     
@@ -25,7 +25,7 @@ class LGChatBaseCell: UITableViewCell {
     var iconContraintNotime: NSLayoutConstraint!
     var iconContraintWithTime: NSLayoutConstraint!
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         
         iconImageView = UIImageView(image: UIImage(named: "DefaultHead"))
         iconImageView.layer.cornerRadius = 8.0
@@ -33,26 +33,26 @@ class LGChatBaseCell: UITableViewCell {
         iconImageView.tag = iconImageTag
         
         backgroundImageView = UIImageView(image: backgroundImage.incoming, highlightedImage: backgroundImage.incomingHighlighed)
-        backgroundImageView.userInteractionEnabled = true
+        backgroundImageView.isUserInteractionEnabled = true
         backgroundImageView.layer.cornerRadius = 5.0
         backgroundImageView.layer.masksToBounds = true
         backgroundImageView.tag = backgroundImageTag
         
         timeLabel = UILabel(frame: CGRectZero)
-        timeLabel.textAlignment = .Center
+        timeLabel.textAlignment = .center
         timeLabel.font = timeFont
         
-        indicatorView = UIButton(type: .Custom)
+        indicatorView = UIButton(type: .custom)
         indicatorView.tag = indicatorTag
-        indicatorView.setBackgroundImage(UIImage(named: "share_auth_fail"), forState: .Normal)
-        indicatorView.hidden = true
+        indicatorView.setBackgroundImage(UIImage(named: "share_auth_fail"), for: .normal)
+        indicatorView.isHidden = true
         
-        indicatorView.setTitleColor(UIColor.blackColor(), forState: .Normal)
+        indicatorView.setTitleColor(UIColor.black, for: .normal)
         indicatorView.titleLabel?.font = indicatorFont
         
-        super.init(style: .Default, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .None
-        backgroundColor = UIColor.clearColor()
+        super.init(style: .default, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
+        backgroundColor = UIColor.clear
         
         contentView.addSubview(timeLabel)
         contentView.addSubview(iconImageView)
@@ -65,28 +65,28 @@ class LGChatBaseCell: UITableViewCell {
         indicatorView.translatesAutoresizingMaskIntoConstraints = false
 
         // add timerLabel constaint, only need add x,y
-        contentView.addConstraint(NSLayoutConstraint(item: timeLabel, attribute: .Left, relatedBy: .Equal, toItem: contentView, attribute: .Left, multiplier: 1, constant: 10))
-        contentView.addConstraint(NSLayoutConstraint(item: timeLabel, attribute: .Right, relatedBy: .Equal, toItem: contentView, attribute: .Right, multiplier: 1, constant: -10))
-        contentView.addConstraint(NSLayoutConstraint(item: timeLabel, attribute: .Top, relatedBy: .Equal, toItem: contentView, attribute: .Top, multiplier: 1, constant: 5))
+        contentView.addConstraint(NSLayoutConstraint(item: timeLabel, attribute: .left, relatedBy: .equal, toItem: contentView, attribute: .left, multiplier: 1, constant: 10))
+        contentView.addConstraint(NSLayoutConstraint(item: timeLabel, attribute: .right, relatedBy: .equal, toItem: contentView, attribute: .right, multiplier: 1, constant: -10))
+        contentView.addConstraint(NSLayoutConstraint(item: timeLabel, attribute: .top, relatedBy: .equal, toItem: contentView, attribute: .top, multiplier: 1, constant: 5))
         
         // iconView constraint
-        contentView.addConstraint(NSLayoutConstraint(item: iconImageView, attribute: .Left, relatedBy: .Equal, toItem: contentView, attribute: .Left, multiplier: 1, constant: 10))
+        contentView.addConstraint(NSLayoutConstraint(item: iconImageView, attribute: .left, relatedBy: .equal, toItem: contentView, attribute: .left, multiplier: 1, constant: 10))
         
-        iconImageView.addConstraint(NSLayoutConstraint(item: iconImageView, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 45))
-        iconImageView.addConstraint(NSLayoutConstraint(item: iconImageView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 45))
+        iconImageView.addConstraint(NSLayoutConstraint(item: iconImageView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 45))
+        iconImageView.addConstraint(NSLayoutConstraint(item: iconImageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 45))
         
         // background constraint
-        contentView.addConstraint(NSLayoutConstraint(item: backgroundImageView, attribute: .Left, relatedBy: .Equal, toItem: iconImageView, attribute: .Right, multiplier: 1, constant: 10))
-        contentView.addConstraint(NSLayoutConstraint(item: backgroundImageView, attribute: .Top, relatedBy: .Equal, toItem: iconImageView, attribute: .Top, multiplier: 1, constant: 0))
+        contentView.addConstraint(NSLayoutConstraint(item: backgroundImageView, attribute: .left, relatedBy: .equal, toItem: iconImageView, attribute: .right, multiplier: 1, constant: 10))
+        contentView.addConstraint(NSLayoutConstraint(item: backgroundImageView, attribute: .top, relatedBy: .equal, toItem: iconImageView, attribute: .top, multiplier: 1, constant: 0))
        
         // indicator constraint
-        indicatorView.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 17))
-        indicatorView.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 17))
-        contentView.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: .CenterY, relatedBy: .Equal, toItem: backgroundImageView, attribute: .CenterY, multiplier: 1, constant: -5))
-        contentView.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: .Left, relatedBy: .Equal, toItem: backgroundImageView, attribute: .Right, multiplier: 1, constant: 0))
+        indicatorView.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 17))
+        indicatorView.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 17))
+        contentView.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: .centerY, relatedBy: .equal, toItem: backgroundImageView, attribute: .centerY, multiplier: 1, constant: -5))
+        contentView.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: .left, relatedBy: .equal, toItem: backgroundImageView, attribute: .right, multiplier: 1, constant: 0))
         
-        iconContraintNotime = NSLayoutConstraint(item: iconImageView, attribute: .Top, relatedBy: .Equal, toItem: contentView, attribute: .Top, multiplier: 1, constant: 10)
-        iconContraintWithTime = NSLayoutConstraint(item: iconImageView, attribute: .Top, relatedBy: .Equal, toItem: timeLabel, attribute: .Bottom, multiplier: 1, constant: 5)
+        iconContraintNotime = NSLayoutConstraint(item: iconImageView, attribute: .top, relatedBy: .equal, toItem: contentView, attribute: .top, multiplier: 1, constant: 10)
+        iconContraintWithTime = NSLayoutConstraint(item: iconImageView, attribute: .top, relatedBy: .equal, toItem: timeLabel, attribute: .bottom, multiplier: 1, constant: 5)
     
         contentView.addConstraint(iconContraintWithTime)
     }
@@ -98,13 +98,13 @@ class LGChatBaseCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        timeLabel.hidden = false
+        timeLabel.isHidden = false
         contentView.addConstraint(iconContraintWithTime)
     }
     
     func setMessage(message: Message) {
         
-        if !timeLabel.hidden {
+        if !timeLabel.isHidden {
             contentView.removeConstraint(iconContraintNotime)
             timeLabel.text = message.dataString
         } else {
@@ -112,61 +112,61 @@ class LGChatBaseCell: UITableViewCell {
             contentView.addConstraint(iconContraintNotime)
         }
         
-        if message.iconName.lengthOfBytesUsingEncoding(NSUTF8StringEncoding) > 0 {
+        if message.iconName.lengthOfBytes(using: String.Encoding(rawValue: NSUTF8StringEncoding)) > 0 {
             if let image = UIImage(named: message.iconName) {
                 iconImageView.image = image
             }
         }
         
         if message.incoming != (tag == receiveTag) {
-            var layoutAttribute: NSLayoutAttribute
+            var layoutAttribute: NSLayoutConstraint.Attribute
             var layoutConstraint: CGFloat
-            var backlayoutAttribute: NSLayoutAttribute
+            var backlayoutAttribute: NSLayoutConstraint.Attribute
             
             if message.incoming {
                 tag = receiveTag
                 backgroundImageView.image = backgroundImage.incoming
                 backgroundImageView.highlightedImage = backgroundImage.incomingHighlighed
-                layoutAttribute = .Left
-                backlayoutAttribute = .Right
+                layoutAttribute = .left
+                backlayoutAttribute = .right
                 layoutConstraint = 10
             } else {
                 tag = sendTag
                 backgroundImageView.image = backgroundImage.outgoing
                 backgroundImageView.highlightedImage = backgroundImage.outgoingHighlighed
-                layoutAttribute = .Right
-                backlayoutAttribute = .Left
+                layoutAttribute = .right
+                backlayoutAttribute = .left
                 layoutConstraint = -10
             }
             
-            let constraints: NSArray = contentView.constraints
+            let constraints: NSArray = contentView.constraints as NSArray
             
             // reAdd iconImageView left/right constraint
-            let indexOfConstraint = constraints.indexOfObjectPassingTest { (constraint, idx, stop) in
-                return (constraint.firstItem as! UIView).tag == iconImageTag && (constraint.firstAttribute == NSLayoutAttribute.Left || constraint.firstAttribute == NSLayoutAttribute.Right)
+            let indexOfConstraint = constraints.indexOfObject { (constraint, idx, stop) in
+                return ((constraint as AnyObject).firstItem as! UIView).tag == iconImageTag && ((constraint as AnyObject).firstAttribute == NSLayoutConstraint.Attribute.left || (constraint as AnyObject).firstAttribute == NSLayoutConstraint.Attribute.right)
             }
             contentView.removeConstraint(constraints[indexOfConstraint] as! NSLayoutConstraint)
-            contentView.addConstraint(NSLayoutConstraint(item: iconImageView, attribute: layoutAttribute, relatedBy: .Equal, toItem: contentView, attribute: layoutAttribute, multiplier: 1, constant: layoutConstraint))
+            contentView.addConstraint(NSLayoutConstraint(item: iconImageView, attribute: layoutAttribute, relatedBy: .equal, toItem: contentView, attribute: layoutAttribute, multiplier: 1, constant: layoutConstraint))
             
             // reAdd backgroundImageView left/right constraint
-            let indexOfBackConstraint = constraints.indexOfObjectPassingTest { (constraint, idx, stop) in
-                return (constraint.firstItem as! UIView).tag == backgroundImageTag && (constraint.firstAttribute == NSLayoutAttribute.Left || constraint.firstAttribute == NSLayoutAttribute.Right)
+            let indexOfBackConstraint = constraints.indexOfObject { (constraint, idx, stop) in
+                return ((constraint as AnyObject).firstItem as! UIView).tag == backgroundImageTag && ((constraint as AnyObject).firstAttribute == NSLayoutConstraint.Attribute.left || (constraint as AnyObject).firstAttribute == NSLayoutConstraint.Attribute.right)
             }
             contentView.removeConstraint(constraints[indexOfBackConstraint] as! NSLayoutConstraint)
-            contentView.addConstraint(NSLayoutConstraint(item: backgroundImageView, attribute: layoutAttribute, relatedBy: .Equal, toItem: iconImageView, attribute: backlayoutAttribute, multiplier: 1, constant: layoutConstraint))
+            contentView.addConstraint(NSLayoutConstraint(item: backgroundImageView, attribute: layoutAttribute, relatedBy: .equal, toItem: iconImageView, attribute: backlayoutAttribute, multiplier: 1, constant: layoutConstraint))
             
             // reAdd indicator left/right constraint
-            let indexOfIndicatorConstraint = constraints.indexOfObjectPassingTest { (constraint, idx, stop) in
-                return (constraint.firstItem as! UIView).tag == indicatorTag && (constraint.firstAttribute == NSLayoutAttribute.Left || constraint.firstAttribute == NSLayoutAttribute.Right)
+            let indexOfIndicatorConstraint = constraints.indexOfObject { (constraint, idx, stop) in
+                return ((constraint as AnyObject).firstItem as! UIView).tag == indicatorTag && ((constraint as AnyObject).firstAttribute == NSLayoutConstraint.Attribute.left || (constraint as AnyObject).firstAttribute == NSLayoutConstraint.Attribute.right)
             }
             contentView.removeConstraint(constraints[indexOfIndicatorConstraint] as! NSLayoutConstraint)
-            contentView.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: layoutAttribute, relatedBy: .Equal, toItem: backgroundImageView, attribute: backlayoutAttribute, multiplier: 1, constant: 0))
+            contentView.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: layoutAttribute, relatedBy: .equal, toItem: backgroundImageView, attribute: backlayoutAttribute, multiplier: 1, constant: 0))
         }
     }
     
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        backgroundImageView.highlighted = selected
+        backgroundImageView.isHighlighted = selected
     }
 }
 
@@ -191,10 +191,10 @@ func imageWithColor(image: UIImage, red: CGFloat, green: CGFloat, blue: CGFloat,
     let rect = CGRect(origin: CGPointZero, size: image.size)
     UIGraphicsBeginImageContextWithOptions(image.size, false, image.scale)
     let context = UIGraphicsGetCurrentContext()
-    image.drawInRect(rect)
-    CGContextSetRGBFillColor(context, red, green, blue, alpha)
-    CGContextSetBlendMode(context, CGBlendMode.SourceAtop)
-    CGContextFillRect(context, rect)
+    image.draw(in: rect)
+    context!.setFillColor(red: red, green: green, blue: blue, alpha: alpha)
+    context!.setBlendMode(CGBlendMode.sourceAtop)
+    context!.fill(rect)
     let newImage = UIGraphicsGetImageFromCurrentImageContext()
     UIGraphicsEndImageContext()
     return newImage

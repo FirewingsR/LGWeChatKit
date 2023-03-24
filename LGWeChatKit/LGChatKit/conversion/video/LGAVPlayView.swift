@@ -33,15 +33,15 @@ class LGAVPlayView: UIView {
     }
     
     func setup() {
-        backgroundColor = UIColor.blackColor()
+        backgroundColor = UIColor.black
         playView = UIView()
         
         slider = UISlider()
-        slider.setThumbImage(UIImage.imageWithColor(UIColor.redColor()), forState: .Normal)
+        slider.setThumbImage(UIImage.imageWithColor(color: UIColor.red), for: .normal)
         
         timerIndicator = UILabel()
-        timerIndicator.font = UIFont.systemFontOfSize(12.0)
-        timerIndicator.textColor = UIColor.whiteColor()
+        timerIndicator.font = UIFont.systemFont(ofSize: 12.0)
+        timerIndicator.textColor = UIColor.white
         
         addSubview(playView)
         addSubview(slider)
@@ -51,20 +51,20 @@ class LGAVPlayView: UIView {
         slider.translatesAutoresizingMaskIntoConstraints = false
         timerIndicator.translatesAutoresizingMaskIntoConstraints = false
         
-        addConstraint(NSLayoutConstraint(item: playView, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1, constant: 0))
-        addConstraint(NSLayoutConstraint(item: playView, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 1, constant: 0))
-        addConstraint(NSLayoutConstraint(item: playView, attribute: .Right, relatedBy: .Equal, toItem: self, attribute: .Right, multiplier: 1, constant: 0))
-        addConstraint(NSLayoutConstraint(item: playView, attribute: .Bottom, relatedBy: .Equal, toItem: slider, attribute: .Top, multiplier: 1, constant: -5))
+        addConstraint(NSLayoutConstraint(item: playView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: playView, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: playView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: playView, attribute: .bottom, relatedBy: .equal, toItem: slider, attribute: .top, multiplier: 1, constant: -5))
         
-        addConstraint(NSLayoutConstraint(item: slider, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 1, constant: 10))
-        addConstraint(NSLayoutConstraint(item: slider, attribute: .Right, relatedBy: .Equal, toItem: timerIndicator, attribute: .Left, multiplier: 1, constant: -5))
-        addConstraint(NSLayoutConstraint(item: slider, attribute: .Bottom, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1, constant: -5))
+        addConstraint(NSLayoutConstraint(item: slider, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1, constant: 10))
+        addConstraint(NSLayoutConstraint(item: slider, attribute: .right, relatedBy: .equal, toItem: timerIndicator, attribute: .left, multiplier: 1, constant: -5))
+        addConstraint(NSLayoutConstraint(item: slider, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: -5))
         
-        addConstraint(NSLayoutConstraint(item: timerIndicator, attribute: .Right, relatedBy: .Equal, toItem: self, attribute: .Right, multiplier: 1, constant: -5))
-        addConstraint(NSLayoutConstraint(item: timerIndicator, attribute: .CenterY, relatedBy: .Equal, toItem: slider, attribute: .CenterY, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: timerIndicator, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: -5))
+        addConstraint(NSLayoutConstraint(item: timerIndicator, attribute: .centerY, relatedBy: .equal, toItem: slider, attribute: .centerY, multiplier: 1, constant: 0))
     }
     
-     override class func layerClass() -> AnyClass {
+    override class var layerClass: AnyClass {
         return AVPlayerLayer.self
     }
 }

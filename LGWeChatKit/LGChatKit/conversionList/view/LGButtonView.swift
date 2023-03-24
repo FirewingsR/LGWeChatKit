@@ -28,7 +28,7 @@ class LGButtonView: UIView {
         self.init(frame: CGRectZero)
         self.translatesAutoresizingMaskIntoConstraints = false
         
-        widthConstraint = NSLayoutConstraint(item: self, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 0.0)
+        widthConstraint = NSLayoutConstraint(item: self, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 0.0)
         addConstraint(widthConstraint)
         
         self.buttons = buttons
@@ -50,27 +50,27 @@ class LGButtonView: UIView {
                 addSubview(button)
                 button.translatesAutoresizingMaskIntoConstraints = false
                 
-                if precedingView.isKindOfClass(UIButton) {
-                    addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:[precedingView][button(==precedingView)]", options: .AlignAllBaseline, metrics: nil, views: ["precedingView": precedingView, "button": button]))
+                if precedingView.isKind(of: UIButton.self) {
+                    addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[precedingView][button(==precedingView)]", options: .alignAllLastBaseline, metrics: nil, views: ["precedingView": precedingView, "button": button]))
                 } else {
-                    addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[button]", options: .DirectionLeadingToTrailing, metrics: nil, views: ["button": button]))
+                    addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[button]", options: .directionLeadingToTrailing, metrics: nil, views: ["button": button]))
                 }
-                addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[button]|", options: .DirectionLeadingToTrailing, metrics: nil, views: ["button": button]))
+                addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[button]|", options: .directionLeadingToTrailing, metrics: nil, views: ["button": button]))
             
-                buttonIndex++
+                buttonIndex += 1
                 let gesture = LGButtonTapGestureRecognizer(target: parentCell, action: buttonSelector)
                 gesture.buttonIndex = buttonIndex
                 button.addGestureRecognizer(gesture)
                 precedingView = button
             }
-            addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("[precedingView]|", options: .DirectionLeadingToTrailing, metrics: nil, views: ["precedingView": precedingView]))
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[precedingView]|", options: .directionLeadingToTrailing, metrics: nil, views: ["precedingView": precedingView]))
         }
         widthConstraint.constant = buttonWidth * CGFloat(buttons.count)
         setNeedsLayout()
         
     }
     
-    func pushBackgroundColor() {
+    func pushBackground() {
         buttonBackgroundColors = [UIColor]()
         
         for button in self.buttons {
@@ -79,7 +79,7 @@ class LGButtonView: UIView {
     }
     
     
-    func popBackgroundColor() {
+    func popBackground() {
         let buttonArray = buttons as NSArray
         let e = buttonArray.objectEnumerator()
         for color in buttonBackgroundColors {

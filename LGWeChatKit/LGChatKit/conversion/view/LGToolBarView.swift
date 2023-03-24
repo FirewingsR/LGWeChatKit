@@ -20,48 +20,48 @@ class LGToolBarView: UIView {
         self.init()
         backgroundColor = UIColor(hexString: "D8EBF2")
         
-        voiceButton = UIButton(type: .Custom)
-        voiceButton.setImage(UIImage(named: "ToolViewInputVoice"), forState: .Normal)
-        voiceButton.setImage(UIImage(named: "ToolViewInputVoiceHL"), forState: .Highlighted)
-        voiceButton.addTarget(taget, action: voiceSelector, forControlEvents: .TouchUpInside)
+        voiceButton = UIButton(type: .custom)
+        voiceButton.setImage(UIImage(named: "ToolViewInputVoice"), for: .normal)
+        voiceButton.setImage(UIImage(named: "ToolViewInputVoiceHL"), for: .highlighted)
+        voiceButton.addTarget(taget, action: voiceSelector, for: .touchUpInside)
         self.addSubview(voiceButton)
         
         textView = InputTextView()
-        textView.font = UIFont.systemFontOfSize(17)
-        textView.layer.borderColor = UIColor(hexString: "DADADA")?.CGColor
+        textView.font = UIFont.systemFont(ofSize: 17)
+        textView.layer.borderColor = UIColor(hexString: "DADADA")?.cgColor
         textView.layer.borderWidth = 1
         textView.layer.cornerRadius = 5.0
         textView.scrollsToTop = false
-        textView.textContainerInset = UIEdgeInsetsMake(5, 5, 5, 5)
+        textView.textContainerInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         textView.backgroundColor = UIColor(hexString: "f8fefb")
-        textView.returnKeyType = .Send
+        textView.returnKeyType = .send
         self.addSubview(textView)
         
-        emotionButton = UIButton(type: .Custom)
+        emotionButton = UIButton(type: .custom)
         emotionButton.tag = 1
-        emotionButton.setImage(UIImage(named: "ToolViewEmotion"), forState: .Normal)
-        emotionButton.setImage(UIImage(named: "ToolViewEmotionHL"), forState: .Highlighted)
-        emotionButton.addTarget(taget, action: emotionSelector, forControlEvents: .TouchUpInside)
+        emotionButton.setImage(UIImage(named: "ToolViewEmotion"), for: .normal)
+        emotionButton.setImage(UIImage(named: "ToolViewEmotionHL"), for: .highlighted)
+        emotionButton.addTarget(taget, action: emotionSelector, for: .touchUpInside)
         self.addSubview(emotionButton)
         
-        moreButton = UIButton(type: .Custom)
+        moreButton = UIButton(type: .custom)
         moreButton.tag = 2
-        moreButton.setImage(UIImage(named: "TypeSelectorBtn_Black"), forState: .Normal)
-        moreButton.setImage(UIImage(named: "TypeSelectorBtnHL_Black"), forState: .Highlighted)
-        moreButton.addTarget(taget, action: moreSelector, forControlEvents: .TouchUpInside)
+        moreButton.setImage(UIImage(named: "TypeSelectorBtn_Black"), for: .normal)
+        moreButton.setImage(UIImage(named: "TypeSelectorBtnHL_Black"), for: .highlighted)
+        moreButton.addTarget(taget, action: moreSelector, for: .touchUpInside)
         self.addSubview(moreButton)
         
-        recordButton = UIButton(type: .Custom)
-        recordButton.setTitle("按住     说话", forState: .Normal)
-        recordButton.titleLabel?.font = UIFont.systemFontOfSize(14.0)
-        recordButton.setBackgroundImage(UIImage.imageWithColor(UIColor(hexString: "F6F6F6")!), forState: .Normal)
-        recordButton.setTitleColor(UIColor.blackColor(), forState: .Normal)
-        recordButton.addTarget(taget, action: recordSelector, forControlEvents: .TouchDown)
-        recordButton.layer.borderColor = UIColor(hexString: "DADADA")?.CGColor
+        recordButton = UIButton(type: .custom)
+        recordButton.setTitle("按住     说话", for: .normal)
+        recordButton.titleLabel?.font = UIFont.systemFont(ofSize: 14.0)
+        recordButton.setBackgroundImage(UIImage.imageWithColor(color: UIColor(hexString: "F6F6F6")!), for: .normal)
+        recordButton.setTitleColor(UIColor.black, for: .normal)
+        recordButton.addTarget(taget, action: recordSelector, for: .touchDown)
+        recordButton.layer.borderColor = UIColor(hexString: "DADADA")?.cgColor
         recordButton.layer.borderWidth = 1
         recordButton.layer.cornerRadius = 5.0
         recordButton.layer.masksToBounds = true
-        recordButton.hidden = true
+        recordButton.isHidden = true
         self.addSubview(recordButton)
         
         voiceButton.translatesAutoresizingMaskIntoConstraints = false
@@ -69,19 +69,19 @@ class LGToolBarView: UIView {
         emotionButton.translatesAutoresizingMaskIntoConstraints = false
         moreButton.translatesAutoresizingMaskIntoConstraints = false
  
-        self.addConstraint(NSLayoutConstraint(item: voiceButton, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 1, constant: 5))
-        self.addConstraint(NSLayoutConstraint(item: voiceButton, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1, constant: 5))
+        self.addConstraint(NSLayoutConstraint(item: voiceButton, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1, constant: 5))
+        self.addConstraint(NSLayoutConstraint(item: voiceButton, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 5))
         
-        self.addConstraint(NSLayoutConstraint(item: textView, attribute: .Left, relatedBy: .Equal, toItem: voiceButton, attribute: .Right, multiplier: 1, constant: 5))
-        self.addConstraint(NSLayoutConstraint(item: textView, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1, constant: 5))
-        textView.addConstraint(NSLayoutConstraint(item: textView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 35.0))
-        self.addConstraint(NSLayoutConstraint(item: textView, attribute: .Right, relatedBy: .Equal, toItem: emotionButton, attribute: .Left, multiplier: 1, constant: -5))
+        self.addConstraint(NSLayoutConstraint(item: textView, attribute: .left, relatedBy: .equal, toItem: voiceButton, attribute: .right, multiplier: 1, constant: 5))
+        self.addConstraint(NSLayoutConstraint(item: textView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 5))
+        textView.addConstraint(NSLayoutConstraint(item: textView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 35.0))
+        self.addConstraint(NSLayoutConstraint(item: textView, attribute: .right, relatedBy: .equal, toItem: emotionButton, attribute: .left, multiplier: 1, constant: -5))
         
-        self.addConstraint(NSLayoutConstraint(item: emotionButton, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1, constant: 5))
-        self.addConstraint(NSLayoutConstraint(item: emotionButton, attribute: .Right, relatedBy: .Equal, toItem: moreButton, attribute: .Left, multiplier: 1, constant: -5))
+        self.addConstraint(NSLayoutConstraint(item: emotionButton, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 5))
+        self.addConstraint(NSLayoutConstraint(item: emotionButton, attribute: .right, relatedBy: .equal, toItem: moreButton, attribute: .left, multiplier: 1, constant: -5))
         
-        self.addConstraint(NSLayoutConstraint(item: moreButton, attribute: .Right, relatedBy: .Equal, toItem: self, attribute: .Right, multiplier: 1, constant: -5))
-        self.addConstraint(NSLayoutConstraint(item: moreButton, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Top, multiplier: 1, constant: 5))
+        self.addConstraint(NSLayoutConstraint(item: moreButton, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: -5))
+        self.addConstraint(NSLayoutConstraint(item: moreButton, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 5))
         
         
     }
@@ -98,21 +98,21 @@ class LGToolBarView: UIView {
     
     internal func showRecord(show: Bool) {
         if show {
-            recordButton.hidden = false
+            recordButton.isHidden = false
             recordButton.frame = textView.frame
-            textView.hidden = true
-            recordButton.setTitle("按住     说话", forState: .Normal)
-            voiceButton.setImage(UIImage(named: "ToolViewKeyboard"), forState: .Normal)
-            voiceButton.setImage(UIImage(named: "ToolViewKeyboardHL"), forState: .Highlighted)
+            textView.isHidden = true
+            recordButton.setTitle("按住     说话", for: .normal)
+            voiceButton.setImage(UIImage(named: "ToolViewKeyboard"), for: .normal)
+            voiceButton.setImage(UIImage(named: "ToolViewKeyboardHL"), for: .highlighted)
             
-            showEmotion(false)
-            showMore(false)
+            showEmotion(show: false)
+            showMore(show: false)
         } else {
-            recordButton.hidden = true
-            textView.hidden = false
+            recordButton.isHidden = true
+            textView.isHidden = false
             textView.inputView = nil
-            voiceButton.setImage(UIImage(named: "ToolViewInputVoice"), forState: .Normal)
-            voiceButton.setImage(UIImage(named: "ToolViewInputVoiceHL"), forState: .Highlighted)
+            voiceButton.setImage(UIImage(named: "ToolViewInputVoice"), for: .normal)
+            voiceButton.setImage(UIImage(named: "ToolViewInputVoiceHL"), for: .highlighted)
         }
     }
     
@@ -120,16 +120,16 @@ class LGToolBarView: UIView {
     internal func showEmotion(show: Bool) {
         if show {
             emotionButton.tag = 0
-            emotionButton.setImage(UIImage(named: "ToolViewKeyboard"), forState: .Normal)
-            emotionButton.setImage(UIImage(named: "ToolViewKeyboardHL"), forState: .Highlighted)
+            emotionButton.setImage(UIImage(named: "ToolViewKeyboard"), for: .normal)
+            emotionButton.setImage(UIImage(named: "ToolViewKeyboardHL"), for: .highlighted)
             
-            showRecord(false)
-            showMore(false)
+            showRecord(show: false)
+            showMore(show: false)
         } else {
             emotionButton.tag = 1
             textView.inputView = nil
-            emotionButton.setImage(UIImage(named: "ToolViewEmotion"), forState: .Normal)
-            emotionButton.setImage(UIImage(named: "ToolViewEmotionHL"), forState: .Highlighted)
+            emotionButton.setImage(UIImage(named: "ToolViewEmotion"), for: .normal)
+            emotionButton.setImage(UIImage(named: "ToolViewEmotionHL"), for: .highlighted)
         }
     }
     
@@ -137,8 +137,8 @@ class LGToolBarView: UIView {
         if show {
             moreButton.tag = 3
             
-            showRecord(false)
-            showEmotion(false)
+            showRecord(show: false)
+            showEmotion(show: false)
         } else {
             textView.inputView = nil
             moreButton.tag = 2
@@ -151,7 +151,7 @@ class LGToolBarView: UIView {
 // only show copy action when editing textview
 
 class InputTextView: UITextView {
-    override func canPerformAction(action: Selector, withSender sender: AnyObject?) -> Bool {
+    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         if (delegate as! LGConversationViewController).tableView.indexPathForSelectedRow != nil {
             return action == "copyAction:"
         } else {
@@ -160,6 +160,6 @@ class InputTextView: UITextView {
     }
     
     func copyAction(menuController: UIMenuController) {
-        (delegate as! LGConversationViewController).copyAction(menuController)
+        (delegate as! LGConversationViewController).copyAction(menuController: menuController)
     }
 }

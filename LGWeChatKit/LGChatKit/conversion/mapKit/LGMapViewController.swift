@@ -36,10 +36,10 @@ class LGMapViewController: UIViewController {
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         locationManager.requestAlwaysAuthorization()
 
-        tableView = UITableView(frame: view.bounds, style: .Plain)
+        tableView = UITableView(frame: view.bounds, style: .plain)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: reuseIndentifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: reuseIndentifier)
         
         mapView = MKMapView()
         
@@ -47,7 +47,7 @@ class LGMapViewController: UIViewController {
         mapView.showsCompass = true
         mapView.showsScale = true
         mapView.showsUserLocation = true
-        mapView.userTrackingMode = .Follow
+        mapView.userTrackingMode = .follow
         
         view.addSubview(tableView)
         view.addSubview(mapView)
@@ -56,15 +56,15 @@ class LGMapViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         mapView.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addConstraint(NSLayoutConstraint(item: mapView, attribute: .Top, relatedBy: .Equal, toItem: view, attribute: .Top, multiplier: 1, constant: 64))
-        view.addConstraint(NSLayoutConstraint(item: mapView, attribute: .Left, relatedBy: .Equal, toItem: view, attribute: .Left, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: mapView, attribute: .Right, relatedBy: .Equal, toItem: view, attribute: .Right, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: mapView, attribute: .Height, relatedBy: .Equal, toItem: view, attribute: .Height, multiplier: 0.5, constant: -32))
+        view.addConstraint(NSLayoutConstraint(item: mapView, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1, constant: 64))
+        view.addConstraint(NSLayoutConstraint(item: mapView, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: mapView, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: mapView, attribute: .height, relatedBy: .equal, toItem: view, attribute: .height, multiplier: 0.5, constant: -32))
         
-        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Left, relatedBy: .Equal, toItem: view, attribute: .Left, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Right, relatedBy: .Equal, toItem: view, attribute: .Right, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Bottom, relatedBy: .Equal, toItem: view, attribute: .Bottom, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .Top, relatedBy: .Equal, toItem: mapView, attribute: .Bottom, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: tableView, attribute: .top, relatedBy: .equal, toItem: mapView, attribute: .bottom, multiplier: 1, constant: 0))
         
         locationManager.requestLocation()
         locationManager.startUpdatingLocation()
@@ -80,23 +80,23 @@ class LGMapViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let item = UIBarButtonItem(title: "返回", style: .Plain, target: self, action: "dismissView")
+        let item = UIBarButtonItem(title: "返回", style: .plain, target: self, action: "dismissView")
         self.navigationItem.leftBarButtonItem = item
         
-        let send = UIBarButtonItem(title: "发送", style: .Plain, target: self, action: "send")
+        let send = UIBarButtonItem(title: "发送", style: .plain, target: self, action: "send")
         self.navigationItem.rightBarButtonItem = send
     }
     
     func dismissView() {
-        self.delegate?.mapViewController(self, didCancel: nil)
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.delegate?.mapViewController(controller: self, didCancel: nil)
+        self.dismiss(animated: true, completion: nil)
     }
 
     
     func send() {
-        let option = MKMapSnapshotOptions()
+        let option = MKMapSnapshotter.Options()
         if mapItems.count > 0 {
             if selectMapItem != nil {
                 option.region.center = (selectMapItem?.placemark.coordinate)!
@@ -106,9 +106,9 @@ class LGMapViewController: UIViewController {
             option.region = mapView.region
         }
         let snape = MKMapSnapshotter(options: option)
-        snape.startWithCompletionHandler { (snapeShort, error) -> Void in
+        snape.start { (snapeShort, error) -> Void in
             if error == nil {
-                self.delegate?.mapViewController(self, didSelectLocationSnapeShort: (snapeShort?.image)!)
+                self.delegate?.mapViewController(controller: self, didSelectLocationSnapeShort: (snapeShort?.image)!)
                 self.dismissView()
             }
         }
@@ -121,12 +121,12 @@ extension LGMapViewController: UITableViewDataSource, UITableViewDelegate {
         return 1
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return mapItems.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(reuseIndentifier, forIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIndentifier, for: indexPath)
         
         let mapItem = mapItems[indexPath.row]
         cell.textLabel?.text = mapItem.name
@@ -134,12 +134,12 @@ extension LGMapViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+    func tableView(tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
         let mapItem = mapItems[indexPath.row]
         let placeMark = mapItem.placemark
         selectMapItem = mapItem
-        mapView.setCenterCoordinate(placeMark.coordinate, animated: true)
+        mapView.setCenter(placeMark.coordinate, animated: true)
        
     }
     
@@ -165,8 +165,8 @@ extension LGMapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         var annotationView: MKPinAnnotationView?
-        if annotation .isKindOfClass(placeAnnotation.self) {
-            annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier("Pin") as? MKPinAnnotationView
+        if annotation.isKind(of: placeAnnotation.self) {
+            annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: "Pin") as? MKPinAnnotationView
             if annotationView == nil {
                 annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "Pin")
                 annotationView!.animatesDrop = true
@@ -180,32 +180,32 @@ extension LGMapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
     
     func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         let point = CGPointMake(mapView.center.x, mapView.center.y - 64)
-        let centerCoordinate = mapView.convertPoint(point, toCoordinateFromView: mapView)
+        let centerCoordinate = mapView.convert(point, toCoordinateFrom: mapView)
         mapView.removeAnnotation(myAnnotation)
         myAnnotation = placeAnnotation(coordinate: centerCoordinate, title: "", subtitle: "")
         mapView.addAnnotation(myAnnotation)
         
         let location = CLLocation(latitude: centerCoordinate.latitude, longitude: centerCoordinate.longitude)
         geocoder.reverseGeocodeLocation(location) { (placeMarks, error) -> Void in
-            if placeMarks?.count > 0 {
-                self.startSearch(centerCoordinate, name: (placeMarks?.first?.name)!)
+            if placeMarks!.count > 0 {
+                self.startSearch(coordinate: centerCoordinate, name: (placeMarks?.first?.name)!)
             }
         }
     }
     
     func startSearch(coordinate: CLLocationCoordinate2D, name: String) {
         if localSearch != nil {
-            if localSearch.searching {
+            if localSearch.isSearching {
                 localSearch.cancel()
             }
         }
         
-        let span = MKCoordinateSpanMake(0.412872, 0.709862)
+        let span = MKCoordinateSpan(latitudeDelta: 0.412872, longitudeDelta: 0.709862)
         let newRegion = MKCoordinateRegion(center: coordinate, span: span)
-        let request = MKLocalSearchRequest()
+        let request = MKLocalSearch.Request()
         request.region = newRegion
         request.naturalLanguageQuery = name
-        let complectionHandle: MKLocalSearchCompletionHandler = { (response, error) -> Void in
+        let complectionHandle: MKLocalSearch.CompletionHandler = { (response, error) -> Void in
             if error == nil {
                 for mapitem in (response?.mapItems)! {
                     NSLog("%@", mapitem.name!)
@@ -213,15 +213,15 @@ extension LGMapViewController: MKMapViewDelegate, CLLocationManagerDelegate {
                 self.mapItems = (response?.mapItems)!
                 self.tableView.reloadData()
             }
-            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
         }
         
         if localSearch != nil {
             localSearch = nil
         }
         localSearch = MKLocalSearch(request: request)
-        localSearch.startWithCompletionHandler(complectionHandle)
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        localSearch.start(completionHandler: complectionHandle)
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
     }
 }
 

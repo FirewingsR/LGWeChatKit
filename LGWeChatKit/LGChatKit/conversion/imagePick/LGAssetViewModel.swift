@@ -8,6 +8,7 @@
 
 import Foundation
 import Photos
+import UIKit
 
 class LGAssetViewModel {
     let asset: Observable<PHAsset>
@@ -17,11 +18,11 @@ class LGAssetViewModel {
     init(assetMode: LGAssetModel) {
         asset = Observable(assetMode.asset)
         image = Observable(UIImage())
-        livePhoto = Observable(PHLivePhoto())
+        livePhoto = Observable(PHLivePhoto(coder: NSCoder())!)
     }
     
     func getTargetSize(size: CGSize) -> CGSize {
-        let scale = UIScreen.mainScreen().scale
+        let scale = UIScreen.main.scale
         let targetSize = CGSizeMake(size.width * scale, size.height * scale)
         
         return targetSize
@@ -29,21 +30,21 @@ class LGAssetViewModel {
     
     
     func updateImage(size: CGSize) {
-        let haveLivePhotoType = asset.value.mediaSubtypes.rawValue & PHAssetMediaSubtype.PhotoLive.rawValue
+        let haveLivePhotoType = asset.value.mediaSubtypes.rawValue & PHAssetMediaSubtype.photoLive.rawValue
         if haveLivePhotoType == 1 {
-            updateLivePhoto(size)
+            updateLivePhoto(size: size)
         } else {
-            updateStaticImage(size)
+            updateStaticImage(size: size)
         }
     }
     
     
     func updateLivePhoto(size: CGSize) {
         let option = PHLivePhotoRequestOptions()
-        option.deliveryMode = .HighQualityFormat
-        option.networkAccessAllowed = true
+        option.deliveryMode = .highQualityFormat
+        option.isNetworkAccessAllowed = true
         
-        PHImageManager.defaultManager().requestLivePhotoForAsset(asset.value, targetSize: getTargetSize(size), contentMode: .AspectFit, options: option) { (livephoto, _:[NSObject : AnyObject]?) -> Void in
+        PHImageManager.default().requestLivePhoto(for: asset.value, targetSize: getTargetSize(size: size), contentMode: .aspectFit, options: option) { (livephoto, _:[AnyHashable : Any]?) -> Void in
             if let Livephoto = livephoto {
                 self.livePhoto.value = Livephoto
             }
@@ -52,10 +53,10 @@ class LGAssetViewModel {
     
     func updateStaticImage(size: CGSize) {
         let option = PHImageRequestOptions()
-        option.deliveryMode = .HighQualityFormat
-        option.networkAccessAllowed = true
+        option.deliveryMode = .highQualityFormat
+        option.isNetworkAccessAllowed = true
         
-        PHImageManager.defaultManager().requestImageForAsset(asset.value, targetSize: getTargetSize(size), contentMode: .AspectFit, options: option) { (image, _: [NSObject : AnyObject]?) -> Void in
+        PHImageManager.default().requestImage(for: asset.value, targetSize: getTargetSize(size: size), contentMode: .aspectFit, options: option) { (image, _: [AnyHashable : Any]?) -> Void in
             if (image == nil) {
                 return
             }

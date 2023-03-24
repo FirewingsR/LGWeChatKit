@@ -12,26 +12,26 @@ class LGChatTextCell: LGChatBaseCell {
 
     let messageLabel: UILabel
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     
         messageLabel = UILabel(frame: CGRectZero)
-        messageLabel.userInteractionEnabled = false
+        messageLabel.isUserInteractionEnabled = false
         messageLabel.numberOfLines = 0
         messageLabel.font = messageFont
         
-        super.init(style: .Default, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .None
+        super.init(style: .default, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
 
         backgroundImageView.addSubview(messageLabel)
         
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        backgroundImageView.addConstraint(NSLayoutConstraint(item: backgroundImageView, attribute: .Width, relatedBy: .Equal, toItem: messageLabel, attribute: .Width, multiplier: 1, constant: 30))
-        backgroundImageView.addConstraint(NSLayoutConstraint(item: messageLabel, attribute: .CenterX, relatedBy: .Equal, toItem: backgroundImageView, attribute: .CenterX, multiplier: 1, constant: 0))
-        backgroundImageView.addConstraint(NSLayoutConstraint(item: messageLabel, attribute: .CenterY, relatedBy: .Equal, toItem: backgroundImageView, attribute: .CenterY, multiplier: 1, constant: -5))
+        backgroundImageView.addConstraint(NSLayoutConstraint(item: backgroundImageView, attribute: .width, relatedBy: .equal, toItem: messageLabel, attribute: .width, multiplier: 1, constant: 30))
+        backgroundImageView.addConstraint(NSLayoutConstraint(item: messageLabel, attribute: .centerX, relatedBy: .equal, toItem: backgroundImageView, attribute: .centerX, multiplier: 1, constant: 0))
+        backgroundImageView.addConstraint(NSLayoutConstraint(item: messageLabel, attribute: .centerY, relatedBy: .equal, toItem: backgroundImageView, attribute: .centerY, multiplier: 1, constant: -5))
         messageLabel.preferredMaxLayoutWidth = 210
-        backgroundImageView.addConstraint(NSLayoutConstraint(item: messageLabel, attribute: .Height, relatedBy: .Equal, toItem: backgroundImageView, attribute: .Height, multiplier: 1, constant: -30))
-        contentView.addConstraint(NSLayoutConstraint(item: backgroundImageView, attribute: .Bottom, relatedBy: .Equal, toItem: contentView, attribute: .Bottom, multiplier: 1, constant: -5))
+        backgroundImageView.addConstraint(NSLayoutConstraint(item: messageLabel, attribute: .height, relatedBy: .equal, toItem: backgroundImageView, attribute: .height, multiplier: 1, constant: -30))
+        contentView.addConstraint(NSLayoutConstraint(item: backgroundImageView, attribute: .bottom, relatedBy: .equal, toItem: contentView, attribute: .bottom, multiplier: 1, constant: -5))
         
     }
     
@@ -41,23 +41,23 @@ class LGChatTextCell: LGChatBaseCell {
     
     
     override func setMessage(message: Message) {
-        super.setMessage(message)
+        super.setMessage(message: message)
         let message = message as! textMessage
         messageLabel.text = message.text
 
-        //indicatorView.hidden = false
+        //indicatorView.isHidden = false
         if message.incoming != (tag == receiveTag) {
             
             if message.incoming {
                 tag = receiveTag
                 backgroundImageView.image = backgroundImage.incoming
                 backgroundImageView.highlightedImage = backgroundImage.incomingHighlighed
-                messageLabel.textColor = UIColor.blackColor()
+                messageLabel.textColor = UIColor.black
             } else {
                 tag = sendTag
                 backgroundImageView.image = backgroundImage.outgoing
                 backgroundImageView.highlightedImage = backgroundImage.outgoingHighlighed
-                messageLabel.textColor = UIColor.whiteColor()
+                messageLabel.textColor = UIColor.white
             }
             
             let messageConstraint : NSLayoutConstraint = backgroundImageView.constraints[1]
@@ -65,9 +65,9 @@ class LGChatTextCell: LGChatBaseCell {
         }
     }
     
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        backgroundImageView.highlighted = selected
+        backgroundImageView.isHighlighted = selected
     }
 }
 
